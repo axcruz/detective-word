@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
   StyleSheet,
   useColorScheme,
 } from "react-native";
@@ -37,12 +38,19 @@ const LeadsScreen = ({ route, navigation }) => {
 
   const renderLeadItem = ({ item }) => (
     <TouchableOpacity
-      style={[themeStyles.primaryButton, styles.leadBox]}
+      style={[styles.leadBox]}
       onPress={() => {
-        // Handle lead click
+        navigation.navigate("Puzzle", { levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
       }}
     >
       <Text style={styles.leadText}>{item.name}</Text>
+      {/* <Image
+        source={{ uri: item.imageUri }} // Replace with the actual image URI
+        style={styles.leadImage}
+        resizeMode="cover"
+      /> */}
+      <Ionicons name={item.icon} size={70} color="white" />
+      <Text style={styles.leadText}>Test</Text>
     </TouchableOpacity>
   );
 
@@ -64,7 +72,7 @@ const LeadsScreen = ({ route, navigation }) => {
               style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
               onPress={() => navigation.navigate("Investigations")}
             >
-              <Ionicons name="layers-outline" size={24} color="white" />
+              <Ionicons name="file-tray-stacked-outline" size={24} color="white" />
             </TouchableOpacity>
           </View>
           <View style={{ margin: 5 }}>
@@ -89,9 +97,16 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     backgroundColor: "#3498db", // Replace with your preferred background color
     borderRadius: 5,
+    height: 180
+  },
+  leadImage: {
+    width: "100%",
+    height: 100, // Adjust the height as needed
+    borderRadius: 5,
+    marginBottom: 5,
   },
   leadText: {
     color: "white",

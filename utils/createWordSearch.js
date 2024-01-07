@@ -111,3 +111,5 @@ const createWordSearch = (n, w) => {
 
     return wordSearchArray;
 }
+
+export default createWordSearch;

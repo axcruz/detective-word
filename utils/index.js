@@ -6,8 +6,10 @@
 
 import getInvestigations from "./getInvestigations";
 import getLevels from "./getLevels";
+import createWordSearch from "./createWordSearch";
 
 export {
     getInvestigations,
-    getLevels
+    getLevels,
+    createWordSearch
 };

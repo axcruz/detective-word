@@ -68,7 +68,7 @@ const InvestigationsScreen = ({ route, navigation }) => {
                                     marginBottom: 2,
                                 },
                             ]}
-                            onPress={() => navigation.navigate("Leads", { invId: item.id })}
+                            onPress={() => {navigation.navigate("Leads", { invId: item.id })}}
                         >
                             <Ionicons name="folder" size={24} style={themeStyles.text} />
                             <Text style={[themeStyles.titleText, { width: "80%" }]}
@@ -104,6 +104,12 @@ const InvestigationsScreen = ({ route, navigation }) => {
                             borderBottomColor: "gray",
                         }}
                     >
+                                    <TouchableOpacity
+              style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
+              onPress={() => navigation.navigate("Investigations")}
+            >
+              <Ionicons name="briefcase-outline" size={24} color="white" />
+            </TouchableOpacity>
                     </View>
 
                     <FlatList

@@ -24,6 +24,7 @@ import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 import InvestigationsScreen from "./screens/InvestigationsScreen";
 import LeadsScreen from "./screens/LeadsScreen";
+import PuzzleScreen from "./screens/PuzzleScreen";
 
 import { auth } from "./firebase/config";
 
@@ -61,6 +62,11 @@ const App = () => {
               name="Leads"
               component={LeadsScreen}
               options={{ title: "Leads" }}
+            />
+            <Stack.Screen
+              name="Puzzle"
+              component={PuzzleScreen}
+              options={{ title: "Puzzle" }}
             />
 
           </Stack.Navigator>
