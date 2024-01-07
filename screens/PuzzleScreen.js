@@ -20,15 +20,33 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [timeRemaining, setTimeRemaining] = useState(minutes * 60);
   const [selectedCells, setSelectedCells] = useState([]);
   const [foundWords, setFoundWords] = useState([]);
-  const [wordSearchArray, setWordSearchArray] = useState([]);
+  const [grid, setGrid] = useState([]);
+
+  const [selectedWord, setSelectedWord] = useState([]);
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+
+  const gridRef = useRef(null); // Create a ref
 
   const themeStyles = getThemeStyles(useColorScheme());
+
 
   // Generate the word search array
   useEffect(() => {
     const generatedWordSearchArray = createWordSearch(dimension, words);
-    setWordSearchArray(generatedWordSearchArray);
+    setGrid(generatedWordSearchArray);
   }, [dimension, words]);
+
+//   useEffect(() => {
+//     // Calculate the offset based on the position of the letter grid
+//     if (gridRef.current) {
+//       gridRef.current.measure((x, y, width, height, pageX, pageY) => {
+//         console.log('Grid Dimensions:', x, y, width, height, pageX, pageY);
+//         setOffsetX(pageX);
+//         setOffsetY(pageY);
+//       });
+//     }
+//   }, [grid]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -38,48 +56,83 @@ const PuzzleScreen = ({ route, navigation }) => {
     return () => clearInterval(timer);
   }, []);
 
-  // Ref to keep track of the latest selectedCells
+  const handleGridRender = (layoutEvent) => {
+    // console.log(layoutEvent.nativeEvent);
+    // const { x, y, width, height } = layoutEvent.nativeEvent.layout;
+    // setOffsetX(x);
+    // setOffsetY(y);
+    if (gridRef.current) {
+      gridRef.current.measure((x, y, width, height, pageX, pageY) => {
+        console.log('Grid Dimensions:', x, y, width, height, pageX, pageY);
+        setOffsetX(x);
+        setOffsetY(pageY);
+      });
+    }
+  };
+
   const selectedCellsRef = useRef(selectedCells);
   selectedCellsRef.current = selectedCells;
 
-  // Ref to keep track of the currently hovered cell
-  const hoveredCellRef = useRef(null);
+  const handleCellDrag = (x, y) => {
+    const cellSize = 42; // Adjust this based on your design
+    const columnIndex = Math.floor((x - offsetX) / cellSize);
+    const rowIndex = Math.floor((y - offsetY) / cellSize);
+    console.log('Drag', x, y, offsetY, rowIndex, columnIndex);
+    if (
+      rowIndex >= 0 &&
+      rowIndex < grid.length &&
+      columnIndex >= 0 &&
+      columnIndex < grid[rowIndex].length
+    ) {
+      const selectedLetter = grid[rowIndex][columnIndex];
+      const lastSelectedIndex = selectedWord.length - 1;
 
-  // PanResponder for touch and drag
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponderCapture: (_, gestureState) =>
-        gestureState.dx !== 0 || gestureState.dy !== 0,
-      onPanResponderGrant: () => {
-        setSelectedCells([]);
-        hoveredCellRef.current = null;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        const { moveX, moveY } = gestureState;
+      // Check if the cell is already selected
+      const isCellSelected = selectedCellsRef.current.some(
+        ({ row, col }) => row === rowIndex && col === columnIndex
+      );
 
-        if (moveX !== undefined && moveY !== undefined) {
-          const hitTestWidth = 30;
-          const row = Math.floor((moveY - 20) / hitTestWidth);
-          const col = Math.floor(moveX / hitTestWidth);
+      if (
+        !isCellSelected &&
+        ((lastSelectedIndex === -1) ||
+          (lastSelectedIndex >= 0 &&
+            Math.abs(rowIndex - selectedWord[lastSelectedIndex].rowIndex) <= 1 &&
+            Math.abs(columnIndex - selectedWord[lastSelectedIndex].columnIndex) <= 1))
+      ) {
+        setSelectedWord([...selectedWord, { letter: selectedLetter, rowIndex, columnIndex }]);
+        setSelectedCells([...selectedCellsRef.current, { row: rowIndex, col: columnIndex }]);
+      }
+    }
+  } 
 
-          if (row >= 0 && row < dimension && col >= 0 && col < dimension) {
-            const newHoveredCell = { row, col };
+  const handlePanResponderGrant = (event, gestureState) => {
+    setSelectedCells([]);
+    console.log('Drag start');
+    const { x0, y0 } = gestureState;
+    handleCellDrag(x0, y0);
+  };
 
-            if (
-              !hoveredCellRef.current ||
-              (newHoveredCell.row !== hoveredCellRef.current.row ||
-                newHoveredCell.col !== hoveredCellRef.current.col)
-            ) {
-              hoveredCellRef.current = newHoveredCell;
-              setSelectedCells([newHoveredCell]);
-            }
-          }
-        }
-      },
-      onPanResponderEnd: () => {},
-    })
-  ).current;
+  const handlePanResponderMove = (event, gestureState) => {
+    const { moveX, moveY } = gestureState;
+    handleCellDrag(moveX, moveY);
+  };
+
+  const onPanResponderRelease = () => {
+    console.log('Drag end');
+    // Check if the selectedWord forms a valid word (implement your own logic)
+    const word = selectedWord.map(({ letter }) => letter).join('');
+    console.log('Selected Word:', word);
+    setSelectedWord([]);
+    setSelectedCells([]);
+  };
+
+  const panResponder = PanResponder.create({
+    onPanResponderGrant: handlePanResponderGrant,
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderMove: handlePanResponderMove,
+    onPanResponderRelease,
+  });
 
   return (
     <View style={[themeStyles.container]}>
@@ -100,18 +153,13 @@ const PuzzleScreen = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View>
-        <Text style={themeStyles.text}>{`Time Remaining: ${timeRemaining} seconds`}</Text>
-      </View>
-
-      <View
-        {...panResponder.panHandlers}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
+      <View ref={gridRef} 
+      {...panResponder.panHandlers}
+      onLayout={handleGridRender}>
         <FlatList
-          data={wordSearchArray}
+          data={grid}
           renderItem={({ item, index }) => (
-            <View key={index} style={styles.rowContainer}>
+            <View key={index} style={{ flexDirection: "row"}}>
               {item.map((cell, colIndex) => (
                 <TouchableOpacity
                   key={colIndex}
@@ -134,6 +182,7 @@ const PuzzleScreen = ({ route, navigation }) => {
           onScroll={() => {}}
         />
       </View>
+
     </View>
   );
 };
@@ -147,8 +196,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cellContainer: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,

@@ -66,7 +66,7 @@ const App = () => {
             <Stack.Screen
               name="Puzzle"
               component={PuzzleScreen}
-              options={{ title: "Puzzle" }}
+              options={{ title: "Puzzle", gestureEnabled: false}}
             />
 
           </Stack.Navigator>
