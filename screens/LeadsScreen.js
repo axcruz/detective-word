@@ -40,7 +40,7 @@ const LeadsScreen = ({ route, navigation }) => {
     <TouchableOpacity
       style={[styles.leadBox]}
       onPress={() => {
-        navigation.navigate("Puzzle", { levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
+        navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
       }}
     >
       <Text style={styles.leadText}>{item.name}</Text>
@@ -50,7 +50,7 @@ const LeadsScreen = ({ route, navigation }) => {
         resizeMode="cover"
       /> */}
       <Ionicons name={item.icon} size={70} color="white" />
-      <Text style={styles.leadText}>Test</Text>
+      <Text style={styles.leadText}>Best: 152 secs</Text>
     </TouchableOpacity>
   );
 

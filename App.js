@@ -25,6 +25,7 @@ import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import InvestigationsScreen from "./screens/InvestigationsScreen";
 import LeadsScreen from "./screens/LeadsScreen";
 import PuzzleScreen from "./screens/PuzzleScreen";
+import GameResultScreen from "./screens/GameResultScreen";
 
 import { auth } from "./firebase/config";
 
@@ -67,6 +68,11 @@ const App = () => {
               name="Puzzle"
               component={PuzzleScreen}
               options={{ title: "Puzzle", gestureEnabled: false}}
+            />
+            <Stack.Screen
+              name="GameResult"
+              component={GameResultScreen}
+              options={{ title: "", gestureEnabled: false,  headerLeft: ()=> null}}
             />
 
           </Stack.Navigator>
