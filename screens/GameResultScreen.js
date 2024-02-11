@@ -3,22 +3,25 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const GameResultScreen = ({ route, navigation }) => {
-    const { invId, levelId, status } = route.params;
+  const { invId, levelId, status, score } = route.params;
 
   return (
     <View style={styles.container}>
 
 
-{status == "success" ? (
-      <Text style={styles.resultText}>Puzzle Solved!</Text>
+      {status == "success" ? (
+        <>
+          <Text style={styles.resultText}>Puzzle Solved!</Text>
+          <Text>{score}</Text>
+        </>
 
-) : (
-    <Text style={styles.resultText}>We're out of time...</Text>
-)}
+      ) : (
+        <Text style={styles.resultText}>We're out of time...</Text>
+      )}
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Leads", {invId: invId})}
+        onPress={() => navigation.navigate("Leads", { invId: invId })}
       >
         <Text style={styles.buttonText}>Back to the Investigation</Text>
       </TouchableOpacity>

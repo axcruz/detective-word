@@ -24,6 +24,7 @@ import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 
 import InvestigationsScreen from "./screens/InvestigationsScreen";
 import LeadsScreen from "./screens/LeadsScreen";
+import StoryScreen from "./screens/StoryScreen";
 import PuzzleScreen from "./screens/PuzzleScreen";
 import GameResultScreen from "./screens/GameResultScreen";
 
@@ -63,6 +64,11 @@ const App = () => {
               name="Leads"
               component={LeadsScreen}
               options={{ title: "Leads" }}
+            />
+            <Stack.Screen
+              name="Story"
+              component={StoryScreen}
+              options={{ title: "Story", gestureEnabled: false}}
             />
             <Stack.Screen
               name="Puzzle"

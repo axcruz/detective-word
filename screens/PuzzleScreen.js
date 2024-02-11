@@ -15,7 +15,7 @@ import { getLevels, createWordSearch } from "../utils";
 import { getThemeStyles, colors } from "../styles/theme";
 
 const PuzzleScreen = ({ route, navigation }) => {
-  const {invId, levelId, dimension, words, minutes } = route.params;
+  const { invId, levelId, dimension, words, minutes } = route.params;
 
   const [timeRemaining, setTimeRemaining] = useState(minutes * 60);
   const [selectedCells, setSelectedCells] = useState([]);
@@ -46,9 +46,10 @@ const PuzzleScreen = ({ route, navigation }) => {
     setGrid(generatedWordSearchArray);
   }, [dimension, words]);
 
+  // If all words found go to game result
   useEffect(() => {
     if (foundWords.length > 0 && foundWords.length == words.length) {
-      handleGameEnd("success");
+      handleGameEnd("success", timeRemaining);
     }
   }, [foundWords]);
 
@@ -60,12 +61,12 @@ const PuzzleScreen = ({ route, navigation }) => {
     return () => clearInterval(timer);
   }, []);
 
-   // If time is up go to game result
-   useEffect(() => {
-      if (timeRemaining <= 0) {
-        handleGameEnd("failure");
-      }
-  }, );
+  // If time is up go to game result
+  useEffect(() => {
+    if (timeRemaining <= 0) {
+      handleGameEnd("failure", timeRemaining);
+    }
+  },);
 
   const handleGridRender = (layoutEvent) => {
     if (gridRef.current) {
@@ -80,8 +81,14 @@ const PuzzleScreen = ({ route, navigation }) => {
     }
   };
 
-  const handleGameEnd = (gameStatus) => {
-    navigation.navigate("GameResult", {invId: invId, levelId: levelId, status: gameStatus });
+  const handleGameEnd = (gameStatus, gameScore) => {
+    navigation.navigate("GameResult",
+      {
+        invId: invId,
+        levelId: levelId,
+        status: gameStatus,
+        score: gameScore
+      });
   };
 
   const handleCellDrag = (x, y) => {
@@ -115,7 +122,7 @@ const PuzzleScreen = ({ route, navigation }) => {
           // Check for diagonal drag
           (lastSelectedIndex >= 0 &&
             Math.abs(rowIndex - selectedWord[lastSelectedIndex].rowIndex) <=
-              1 &&
+            1 &&
             Math.abs(
               columnIndex - selectedWord[lastSelectedIndex].columnIndex
             ) <= 1))
@@ -124,7 +131,7 @@ const PuzzleScreen = ({ route, navigation }) => {
           !diagRemoved &&
           lastSelectedIndex >= 1 &&
           Math.abs(rowIndex - selectedWord[lastSelectedIndex - 1].rowIndex) <=
-            1 &&
+          1 &&
           Math.abs(
             columnIndex - selectedWord[lastSelectedIndex - 1].columnIndex
           ) <= 1
@@ -234,7 +241,8 @@ const PuzzleScreen = ({ route, navigation }) => {
                   <TouchableOpacity
                     key={colIndex}
                     style={[
-                      { width: cellSizeCalc - 10,
+                      {
+                        width: cellSizeCalc - 10,
                         height: cellSizeCalc - 10,
                         justifyContent: "center",
                         alignItems: "center",
@@ -259,7 +267,7 @@ const PuzzleScreen = ({ route, navigation }) => {
               </View>
             )}
             keyExtractor={(item, index) => index.toString()}
-            onScroll={() => {}}
+            onScroll={() => { }}
           />
         </View>
       </View>
