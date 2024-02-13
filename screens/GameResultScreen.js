@@ -1,9 +1,15 @@
 // GameResultScreen.js
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { auth } from "../firebase/config"
 
 const GameResultScreen = ({ route, navigation }) => {
   const { invId, levelId, status, score } = route.params;
+
+  useEffect(() => {
+    // Save the player's score when the component mounts
+    saveScoreToFirebase(invId, levelId, auth.currentUser, score);
+  }, [invId, levelId, score]);
 
   return (
     <View style={styles.container}>

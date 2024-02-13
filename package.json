@@ -6,7 +6,8 @@
     "start": "npx expo start",
     "android": "npx expo start --android",
     "ios": "open -a Simulator && npx expo start",
-    "web": "npx expo start --web"
+    "web": "npx expo start --web",
+    "test": "jest"
   },
   "dependencies": {
     "@babel/core": "^7.20.0",
