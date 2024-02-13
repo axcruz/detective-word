@@ -20,6 +20,8 @@ import { getInvestigations } from "../utils";
 
 import { getThemeStyles } from "../styles/theme";
 
+import SettingsModal from "../components/SettingsModal";
+
 const InvestigationsScreen = ({ route, navigation }) => {
 
     const [refreshing, setRefreshing] = useState(false);
@@ -110,6 +112,16 @@ const InvestigationsScreen = ({ route, navigation }) => {
             >
               <Ionicons name="briefcase-outline" size={24} color="white" />
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]}
+              onPress={() => navigation.navigate("Scoreboard")}
+            >
+              <Ionicons name="trophy" size={24} color="white" />
+            </TouchableOpacity>
+
+            <SettingsModal onRefresh={onRefresh} />
+
                     </View>
 
                     <FlatList

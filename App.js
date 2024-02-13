@@ -27,8 +27,10 @@ import LeadsScreen from "./screens/LeadsScreen";
 import StoryScreen from "./screens/StoryScreen";
 import PuzzleScreen from "./screens/PuzzleScreen";
 import GameResultScreen from "./screens/GameResultScreen";
+import ScoreboardScreen from "./screens/ScoreboardScreen";
 
 import { auth } from "./firebase/config";
+
 
 const Stack = createStackNavigator();
 
@@ -68,7 +70,7 @@ const App = () => {
             <Stack.Screen
               name="Story"
               component={StoryScreen}
-              options={{ title: "Story", gestureEnabled: false}}
+              options={{ title: "", gestureEnabled: false}}
             />
             <Stack.Screen
               name="Puzzle"
@@ -79,6 +81,11 @@ const App = () => {
               name="GameResult"
               component={GameResultScreen}
               options={{ title: "", gestureEnabled: false,  headerLeft: ()=> null}}
+            />
+            <Stack.Screen
+              name="Scoreboard"
+              component={ScoreboardScreen}
+              options={{ title: "Scoreboard", gestureEnabled: false,  headerLeft: ()=> null}}
             />
 
           </Stack.Navigator>

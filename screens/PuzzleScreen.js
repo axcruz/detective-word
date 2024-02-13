@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import LoadingIndicator from "../components/LoadingIndicator";
+import SettingsModal from "../components/SettingsModal";
+
 import { getLevels, createWordSearch } from "../utils";
 import { getThemeStyles, colors } from "../styles/theme";
 
@@ -67,6 +69,14 @@ const PuzzleScreen = ({ route, navigation }) => {
       handleGameEnd("failure", timeRemaining);
     }
   },);
+
+  // Handle refresh for Flatlist
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000); // 2 second pause
+  }, []);
 
   const handleGridRender = (layoutEvent) => {
     if (gridRef.current) {
@@ -218,6 +228,9 @@ const PuzzleScreen = ({ route, navigation }) => {
         >
           <Ionicons name="layers-outline" size={24} color="white" />
         </TouchableOpacity>
+
+        <SettingsModal onRefresh={onRefresh} />
+
       </View>
 
       <View

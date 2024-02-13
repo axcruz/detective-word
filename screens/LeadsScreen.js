@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { getLevels } from "../utils";
 import { getThemeStyles } from "../styles/theme";
+
+import SettingsModal from "../components/SettingsModal";
 
 const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
@@ -35,6 +37,14 @@ const LeadsScreen = ({ route, navigation }) => {
     fetchData();
     setRefreshing(false);
   }, [invId]);
+
+      // Handle refresh for Flatlist
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000); // 2 second pause
+    }, []);
 
   const renderLeadItem = ({ item }) => (
     <TouchableOpacity
@@ -75,7 +85,13 @@ const LeadsScreen = ({ route, navigation }) => {
             >
               <Ionicons name="file-tray-stacked-outline" size={24} color="white" />
             </TouchableOpacity>
+
+            <SettingsModal onRefresh={onRefresh} />
+
           </View>
+
+
+
           <View style={{ margin: 5 }}>
             <FlatList
               data={leads}
