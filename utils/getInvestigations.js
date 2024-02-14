@@ -1,7 +1,7 @@
 import { db } from "../firebase/config";
 
 // Helper function to get investigations data.
-const getInvestigations= async () => {
+const getInvestigations = async () => {
   try {
     const investigationsCollection = db.collection("investigations");
     const querySnapshot = await investigationsCollection

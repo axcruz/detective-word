@@ -48,6 +48,7 @@ describe("getLevels", () => {
         {
           id: "1",
           /* Your mock level data */
+          playerScore: -1,
         },
       ],
     });

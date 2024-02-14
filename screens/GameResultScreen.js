@@ -10,7 +10,7 @@ const GameResultScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     // Save the player's score when the component mounts
-    savePlayerScore(invId, levelId, auth.currentUser.userId, score);
+    savePlayerScore(invId, levelId, auth.currentUser.uid, score);
   }, [invId, levelId, score]);
 
   return (

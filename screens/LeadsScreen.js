@@ -8,6 +8,9 @@ import {
   StyleSheet,
   useColorScheme,
 } from "react-native";
+
+import {auth} from "../firebase/config"
+
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import LoadingIndicator from "../components/LoadingIndicator";
@@ -15,6 +18,7 @@ import { getLevels } from "../utils";
 import { getThemeStyles } from "../styles/theme";
 
 import SettingsModal from "../components/SettingsModal";
+
 
 const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
@@ -27,7 +31,10 @@ const LeadsScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getLevels(invId);
+        console.log("Retrieving leads...");
+        console.log(auth.currentUser.uid);
+        const result = await getLevels(invId, auth.currentUser.uid);
+        console.log(result);
         setLeads(result.levelData);
       } catch (error) {
         // Handle error
@@ -61,7 +68,12 @@ const LeadsScreen = ({ route, navigation }) => {
         resizeMode="cover"
       /> */}
       <Ionicons name={item.icon} size={70} color="white" />
-      <Text style={styles.leadText}>Best: 152 secs</Text>
+      { item.playerScore != -1 ? (
+      <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
+      ) : (
+        <Text style={styles.leadText}></Text>
+      )
+      }
     </TouchableOpacity>
   );
 
@@ -112,7 +124,7 @@ const styles = StyleSheet.create({
   leadBox: {
     flex: 1,
     margin: 5,
-    padding: 10,
+    padding: 15,
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#3498db", // Replace with your preferred background color
@@ -127,7 +139,7 @@ const styles = StyleSheet.create({
   },
   leadText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
 });
