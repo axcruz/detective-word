@@ -62,11 +62,6 @@ const LeadsScreen = ({ route, navigation }) => {
       }}
     >
       <Text style={styles.leadText}>{item.name}</Text>
-      {/* <Image
-        source={{ uri: item.imageUri }} // Replace with the actual image URI
-        style={styles.leadImage}
-        resizeMode="cover"
-      /> */}
       <Ionicons name={item.icon} size={70} color="white" />
       { item.playerScore != -1 ? (
       <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
@@ -97,6 +92,14 @@ const LeadsScreen = ({ route, navigation }) => {
             >
               <Ionicons name="file-tray-stacked-outline" size={24} color="white" />
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]}
+              onPress={() => navigation.navigate("Scoreboard", { invId: invId, playerId: auth.currentUser.uid })}
+            >
+              <Ionicons name="trophy" size={24} color="white" />
+            </TouchableOpacity>
+
 
             <SettingsModal onRefresh={onRefresh} />
 

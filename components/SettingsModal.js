@@ -11,15 +11,21 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { auth } from "../firebase/config";
 import { getThemeStyles } from "../styles/theme";
+import getUserPrefs from "../utils/getUserPrefs";
 
 const SettingsModal = (props) => {
   const [user, setUser] = useState();
+  const [pref, setPref] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
   const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {
-    setUser(auth.currentUser);
+    const fetchSettings = async () => {
+      setUser(auth.currentUser);
+      setPref(await getUserPrefs(auth.currentUser.uid));
+    }
+    fetchSettings();
   }, []);
 
   const toggleModal = () => {
@@ -60,6 +66,7 @@ const SettingsModal = (props) => {
               <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>
                 Settings
               </Text>
+              <Text style={themeStyles.text}>{pref.username}</Text>
               <Text style={themeStyles.text}>{user.email}</Text>
               <View style={{ flexDirection: "row", marginTop: 20 }}>
                 <TouchableOpacity

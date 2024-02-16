@@ -8,10 +8,12 @@ import getInvestigations from "./getInvestigations";
 import getLevels from "./getLevels";
 import createWordSearch from "./createWordSearch";
 import savePlayerScore from "./savePlayerScore";
+import getScoreboard from "./getScoreboard";
 
 export {
     getInvestigations,
     getLevels,
     createWordSearch,
-    savePlayerScore
+    savePlayerScore,
+    getScoreboard
 };

@@ -85,7 +85,7 @@ const App = () => {
             <Stack.Screen
               name="Scoreboard"
               component={ScoreboardScreen}
-              options={{ title: "Scoreboard", gestureEnabled: false,  headerLeft: ()=> null}}
+              options={{ title: "Scoreboard", gestureEnabled: false}}
             />
 
           </Stack.Navigator>

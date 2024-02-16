@@ -1,66 +1,45 @@
-// ScoreboardScreen.js
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { db } from "../firebase/config";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { getScoreboard } from "../utils";
 
 const ScoreboardScreen = ({ route }) => {
-  const { invId, levelId } = route.params;
-  const [leaderboardData, setLeaderboardData] = useState([]);
+  const { invId } = route.params;
+  const [scoreboard, setScoreboard] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
-    const fetchLeaderboardData = async () => {
+    const fetchScoreboardData = async () => {
       try {
-        const scoresRef = db.collection("scores");
-
-        // Query scores for the specific investigation and level
-        const querySnapshot = await scoresRef
-          .where("invId", "==", invId)
-          .where("levelId", "==", levelId)
-          .orderBy("score", "desc") // Order scores in descending order
-          .get();
-
-        const leaderboard = querySnapshot.docs.map(doc => doc.data());
-
-        setLeaderboardData(leaderboard);
+        const scoreboardData = await getScoreboard(invId);
+        setScoreboard(scoreboardData);
       } catch (error) {
-        console.error("Error fetching leaderboard data:", error.message);
+        console.error("Error fetching scoreboard data:", error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchLeaderboardData();
-  }, [invId, levelId]);
+    fetchScoreboardData();
+  }, [invId]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" />;
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Scoreboard</Text>
+    <View>
       <FlatList
-        data={leaderboardData}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.listItem}>
-            <Text>{index + 1}. {item.playerId}</Text>
-            <Text>Score: {item.score}</Text>
+        data={scoreboard}
+        keyExtractor={(item) => item.playerId}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.playerId}</Text>
+            <Text>Total Score: {item.totalScore}</Text>
           </View>
         )}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  listItem: {
-    marginBottom: 10,
-  },
-});
 
 export default ScoreboardScreen;

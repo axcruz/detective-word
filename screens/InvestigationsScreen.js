@@ -113,13 +113,6 @@ const InvestigationsScreen = ({ route, navigation }) => {
               <Ionicons name="briefcase-outline" size={24} color="white" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]}
-              onPress={() => navigation.navigate("Scoreboard")}
-            >
-              <Ionicons name="trophy" size={24} color="white" />
-            </TouchableOpacity>
-
             <SettingsModal onRefresh={onRefresh} />
 
                     </View>
