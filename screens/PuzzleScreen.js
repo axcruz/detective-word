@@ -7,6 +7,7 @@ import {
   StyleSheet,
   useColorScheme,
   PanResponder,
+  Modal
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -17,24 +18,24 @@ import { getLevels, createWordSearch } from "../utils";
 import { getThemeStyles, colors } from "../styles/theme";
 
 const PuzzleScreen = ({ route, navigation }) => {
-  const { invId, levelId, dimension, words, minutes } = route.params;
+  const { invId, levelId, dimension, words, minutes, clue, story_end } = route.params;
 
+  const [gameStatus, setGameStatus] = useState("play");
   const [timeRemaining, setTimeRemaining] = useState(minutes * 60);
   const [selectedCells, setSelectedCells] = useState([]);
   const [foundWords, setFoundWords] = useState([]);
   const [answerCells, setAnswerCells] = useState([]);
-
   const [grid, setGrid] = useState([]);
-
+  const [solution, setSolution] = useState([]);
   const [selectedWord, setSelectedWord] = useState([]);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
   const [screenWidth, setScreenWidth] = useState(0);
-
   const [cellSizeCalc, setCellSizeCalc] = useState(0);
+  //const [hints, setHints] = useState(3);
+  const [showClueModal, setShowClueModal] = useState(false);
 
   const gridRef = useRef(null); // Create a ref
-
   const selectedCellsRef = useRef(selectedCells);
   selectedCellsRef.current = selectedCells;
 
@@ -44,8 +45,9 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   // Generate the word search array
   useEffect(() => {
-    const generatedWordSearchArray = createWordSearch(dimension, words);
-    setGrid(generatedWordSearchArray);
+    const result = createWordSearch(dimension, words);
+    setGrid(result.wordSearchArray);
+    setSolution(result.solutionArray);
   }, [dimension, words]);
 
   // If all words found go to game result
@@ -57,7 +59,9 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemaining((prevTime) => prevTime - 1);
+      if (gameStatus === "play") {
+        setTimeRemaining((prevTime) => prevTime - 1);
+      }
     }, 1000);
 
     return () => clearInterval(timer);
@@ -65,7 +69,7 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   // If time is up go to game result
   useEffect(() => {
-    if (timeRemaining <= 0) {
+    if (timeRemaining <= 0 && gameStatus === "play") {
       handleGameEnd("failure", timeRemaining);
     }
   },);
@@ -92,12 +96,14 @@ const PuzzleScreen = ({ route, navigation }) => {
   };
 
   const handleGameEnd = (gameStatus, gameScore) => {
+    setGameStatus("end");
     navigation.navigate("GameResult",
       {
         invId: invId,
         levelId: levelId,
         status: gameStatus,
-        score: gameScore
+        score: gameScore,
+        story_end: story_end
       });
   };
 
@@ -211,6 +217,17 @@ const PuzzleScreen = ({ route, navigation }) => {
     onPanResponderRelease,
   });
 
+  // Function to provide a clue
+  const handleCluePress = () => {
+    setShowClueModal(true);
+  };
+
+  // Function to close the clue modal
+  const closeClueModal = () => {
+    setShowClueModal(false);
+  };
+
+
   return (
     <View style={[themeStyles.container]}>
       <View
@@ -289,6 +306,27 @@ const PuzzleScreen = ({ route, navigation }) => {
         style={[themeStyles.text, { textAlign: "center" }]}
       >{`Time Remaining: ${timeRemaining} seconds`}</Text>
 
+      <View
+        style={{
+          flexDirection: "row",
+          paddingVertical: 10,
+          marginVertical: 10,
+          borderBottomWidth: 1,
+          borderBottomColor: "gray",
+          borderTopWidth: 1,
+          borderTopColor: "gray",
+          justifyContent: "center"
+        }}
+      >
+        <TouchableOpacity
+          style={[themeStyles.tertiaryButton, { margin: 5 }]}
+          onPress={handleCluePress}
+        >
+          <Ionicons name="bulb-outline" size={18} color="white" />
+        </TouchableOpacity>
+
+      </View>
+
       <View style={{ margin: 15 }}>
         <Text style={[themeStyles.text, { marginBottom: 5 }]}>
           Found Words:
@@ -301,7 +339,22 @@ const PuzzleScreen = ({ route, navigation }) => {
           keyExtractor={(item) => item}
         />
       </View>
-    </View>
+
+      <Modal
+        visible={showClueModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeClueModal}
+      >
+        <TouchableOpacity style={[themeStyles.modalView, { backgroundColor: 'rgba(52, 52, 52, 0.9)' }]} 
+        onPress={closeClueModal}>
+          <Text style={[themeStyles.text, { color: "white" }]}>{clue}
+          </Text>
+    </TouchableOpacity>
+      </Modal >
+
+    </View >
+
   );
 };
 
@@ -314,7 +367,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   selectedCell: {
-    backgroundColor: "yellow",
+    backgroundColor: colors.tertiary,
   },
   answerCell: {
     backgroundColor: colors.success,

@@ -20,6 +20,8 @@ const createWordSearch = (n, w) => {
     // Create an empty n x n array filled with empty strings
     const wordSearchArray = Array.from({ length: n }, () => Array(n).fill(''));
 
+    const solutionArray = Array.from({ length: n }, () => Array(n).fill(''));
+
     // Use a Set to keep track of already placed positions
     const placedPositions = new Set();
 
@@ -64,19 +66,24 @@ const createWordSearch = (n, w) => {
 
     // Helper function to place a word at a given position
     function placeWord(word, row, col, direction) {
+        const transformWord = Math.random() < 0.5 ? word : word.split("").reverse().join(""); // Randomly reverse the order of the word
+
         if (direction === 'horizontal') {
-            for (let i = 0; i < word.length; i++) {
-                wordSearchArray[row][col + i] = word[i].toUpperCase();
+            for (let i = 0; i < transformWord.length; i++) {
+                wordSearchArray[row][col + i] = transformWord[i].toUpperCase();
+                solutionArray[row][col + i] = transformWord[i].toUpperCase();
                 markPositionAsPlaced(row, col + i);
             }
         } else if (direction === 'vertical') {
-            for (let i = 0; i < word.length; i++) {
-                wordSearchArray[row + i][col] = word[i].toUpperCase();
+            for (let i = 0; i < transformWord.length; i++) {
+                wordSearchArray[row + i][col] = transformWord[i].toUpperCase();
+                solutionArray[row + i][col] = transformWord[i].toUpperCase();
                 markPositionAsPlaced(row + i, col);
             }
         } else if (direction === 'diagonal') {
-            for (let i = 0; i < word.length; i++) {
-                wordSearchArray[row + i][col + i] = word[i].toUpperCase();
+            for (let i = 0; i < transformWord.length; i++) {
+                wordSearchArray[row + i][col + i] = transformWord[i].toUpperCase();
+                solutionArray[row + i][col + i] = transformWord[i].toUpperCase();
                 markPositionAsPlaced(row + i, col + i);
             }
         }
@@ -109,7 +116,7 @@ const createWordSearch = (n, w) => {
         }
     }
 
-    return wordSearchArray;
+    return {wordSearchArray, solutionArray};
 }
 
 export default createWordSearch;

@@ -17,5 +17,5 @@ export {
     createWordSearch,
     savePlayerScore,
     getScoreboard,
-    getUserPrefs
+    getUserPrefs,
 };

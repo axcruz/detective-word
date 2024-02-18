@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  Image,
   StyleSheet,
   useColorScheme,
 } from "react-native";
@@ -55,9 +54,9 @@ const LeadsScreen = ({ route, navigation }) => {
       style={[styles.leadBox]}
       onPress={() => {
         if (item.story) {
-          navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, stories: item.story })
+          navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, clue: item.clue, stories: item.story, image: item.story_image, story_end: item.story_result })
         } else {
-          navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
+          navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, clue: item.clue, story_end: item.story_result })
         }
       }}
     >

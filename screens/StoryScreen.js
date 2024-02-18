@@ -1,44 +1,66 @@
 // StoryScreen.js
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useColorScheme, Image } from 'react-native';
 
-const StoryScreen = ({route, navigation}) => {
-    
-    const { invId, levelId, dimension, words, minutes, stories } = route.params;
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { getThemeStyles, colors } from "../styles/theme";
+
+const StoryScreen = ({ route, navigation }) => {
+
+  const { invId, levelId, dimension, words, minutes, clue, stories, image, story_end } = route.params;
 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
-  // const stories = [
-  //   'Detective Word was assigned a crucial case involving a mysterious crime...',
-  //   'He carefully examined the crime scene, looking for any clues that could lead him to the truth...',
-  //   'As Detective Word prepared to interview the key witness, he felt a mix of anticipation and determination...',
-  //   'Mr. Talbot, a person of interest in the investigation, had valuable information that could crack the case wide open...',
-  //   'With a notepad in hand, Detective Smith approached the witness, ready to uncover the hidden details of the crime...',
-  // ];
+  const themeStyles = getThemeStyles(useColorScheme());
 
   const handleNextStory = () => {
     if (currentStoryIndex < stories.length - 1) {
       setCurrentStoryIndex(currentStoryIndex + 1);
     } else {
       // Optionally, you can navigate to another screen or perform an action when the story ends.
-      navigation.navigate("Puzzle", { invId: invId, levelId: levelId, dimension: dimension, words: words, minutes: minutes })
+      navigation.navigate("Puzzle", { invId: invId, levelId: levelId, dimension: dimension, words: words, minutes: minutes, clue: clue, story_end: story_end })
     }
+  };
+
+  const handlePrevStory = () => {
+    setCurrentStoryIndex(currentStoryIndex - 1);
   };
 
   const handleSkipStory = () => {
     // Optionally, you can navigate to another screen or perform an action when the story is skipped.
-    navigation.navigate("Puzzle", { invId: invId, levelId: levelId, dimension: dimension, words: words, minutes: minutes })
+    navigation.navigate("Puzzle", { invId: invId, levelId: levelId, dimension: dimension, words: words, minutes: minutes, clue: clue, story_end: story_end })
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.storyText}>{stories[currentStoryIndex]}</Text>
+    <View style={[themeStyles.container, { justifyContent: "flex-end" }]}>
+      {image && (
+        <Image source={{uri: image}} style={{ borderColor: "#E8E9EB", borderWidth: 1,
+          borderRadius: 5, width: '100%', height: '40%', marginBottom: 20 }} resizeMode="cover" /> )
+      }
+      <View style={[themeStyles.card, { height: '40%', marginBottom: 20 }]}>
+        <ScrollView>
+        <Text style={themeStyles.text}>{stories[currentStoryIndex]}</Text>
+        </ScrollView>
+      </View>
+
+
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleSkipStory} style={[styles.button, { backgroundColor: 'green' }]}>
+
+        {currentStoryIndex > 0 && (
+          <TouchableOpacity onPress={handlePrevStory} style={[themeStyles.primaryButton]}>
+            <Ionicons name="chevron-back-sharp" size={24} color="white" />
+          </TouchableOpacity>
+        )
+        }
+        <TouchableOpacity onPress={handleSkipStory} style={[themeStyles.configButton]}>
           <Text style={styles.buttonText}>Skip</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleNextStory} style={[styles.button, { backgroundColor: 'blue' }]}>
-          <Text style={styles.buttonText}>Next</Text>
+        <TouchableOpacity onPress={handleNextStory} style={[themeStyles.primaryButton]}>
+        <Ionicons
+                  name="chevron-forward-sharp"
+                  size={24}
+                  color="white"
+                />
         </TouchableOpacity>
       </View>
     </View>
@@ -47,33 +69,33 @@ const StoryScreen = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 20,
-    },
-    storyText: {
-      fontSize: 18,
-      textAlign: 'left',
-      marginBottom: 20,
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    button: {
-      padding: 10,
-      borderRadius: 5,
-      flex: 1,
-      margin: 5,
-      alignItems: 'center',
-    },
-    buttonText: {
-      color: 'white',
-      fontSize: 16,
-    },
-  });
-  
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  storyText: {
+    fontSize: 18,
+    textAlign: 'left'
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 50,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    margin: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+});
+
 
 export default StoryScreen;

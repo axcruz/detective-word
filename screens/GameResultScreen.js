@@ -1,36 +1,50 @@
 // GameResultScreen.js
-import React, { useState, useEffect, useRef, useCallback }  from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, useColorScheme, ScrollView } from "react-native";
 import { auth } from "../firebase/config"
+
+import { getThemeStyles } from "../styles/theme";
 
 import { savePlayerScore } from "../utils";
 
 const GameResultScreen = ({ route, navigation }) => {
-  const { invId, levelId, status, score } = route.params;
+  const { invId, levelId, status, score, story_end } = route.params;
+
+  const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {
     // Save the player's score when the component mounts
-    savePlayerScore(invId, levelId, auth.currentUser.uid, score);
-  }, [invId, levelId, score]);
+    if (status === "success") {
+      savePlayerScore(invId, levelId, auth.currentUser.uid, score);
+    } else {
+      savePlayerScore(invId, levelId, auth.currentUser.uid, 0);
+    }
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={themeStyles.container}>
 
       {status == "success" ? (
         <>
-          <Text style={styles.resultText}>Puzzle Solved!</Text>
-          <Text style={styles.resultText}> Score: {score}</Text>
+          <Text style={[themeStyles.headerText, {textAlign: "center", marginBottom: 20 }]}>Puzzle Solved!</Text>
+          <Text style={[themeStyles.headerText, {textAlign: "center", marginBottom: 20 }]}>Score: {score}</Text>
+
+          <View style={[themeStyles.card, { height: '50%', marginBottom: 20 }]}>
+        <ScrollView>
+        <Text style={themeStyles.text}>{story_end}</Text>
+        </ScrollView>
+      </View>
         </>
 
       ) : (
-        <Text style={styles.resultText}>We're out of time...</Text>
+        <Text style={[themeStyles.headerText, {textAlign: "center", marginBottom: 20 }]}>We're out of time...</Text>
       )}
 
       <TouchableOpacity
-        style={styles.button}
+        style={themeStyles.configButton}
         onPress={() => navigation.navigate("Leads", { invId: invId })}
       >
-        <Text style={styles.buttonText}>Back to the Investigation</Text>
+        <Text style={themeStyles.buttonText}>Back to the Investigation</Text>
       </TouchableOpacity>
     </View>
   );
