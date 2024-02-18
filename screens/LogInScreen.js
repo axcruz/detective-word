@@ -20,7 +20,7 @@ const LogInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const themeStyles = getThemeStyles(useColorScheme());
+  const themeStyles = getThemeStyles("dark");
 
   const onFooterLinkPress = () => {
     navigation.navigate("Registration");

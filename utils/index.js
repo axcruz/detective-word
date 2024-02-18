@@ -9,11 +9,13 @@ import getLevels from "./getLevels";
 import createWordSearch from "./createWordSearch";
 import savePlayerScore from "./savePlayerScore";
 import getScoreboard from "./getScoreboard";
+import getUserPrefs from "./getUserPrefs";
 
 export {
     getInvestigations,
     getLevels,
     createWordSearch,
     savePlayerScore,
-    getScoreboard
+    getScoreboard,
+    getUserPrefs
 };

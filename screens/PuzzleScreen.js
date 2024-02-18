@@ -296,7 +296,7 @@ const PuzzleScreen = ({ route, navigation }) => {
         <FlatList
           data={foundWords}
           renderItem={({ item }) => (
-            <Text style={[themeStyles.text, { margin: 2 }]}>{item}</Text>
+            <Text style={[themeStyles.text, { margin: 2, fontWeight: 'bold' }]}>{item}</Text>
           )}
           keyExtractor={(item) => item}
         />

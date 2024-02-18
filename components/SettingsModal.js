@@ -51,7 +51,7 @@ const SettingsModal = (props) => {
         alignItems: "center",
       }}
     >
-      {user ? (
+      {user && pref ? (
         <>
           <Modal
             animationType="slide"
@@ -67,6 +67,7 @@ const SettingsModal = (props) => {
                 Settings
               </Text>
               <Text style={themeStyles.text}>{pref.username}</Text>
+              <Text style={themeStyles.text}>{pref.theme}</Text>
               <Text style={themeStyles.text}>{user.email}</Text>
               <View style={{ flexDirection: "row", marginTop: 20 }}>
                 <TouchableOpacity

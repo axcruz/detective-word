@@ -58,7 +58,7 @@ const LeadsScreen = ({ route, navigation }) => {
       style={[styles.leadBox]}
       onPress={() => {
         // navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
-        navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
+        navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, stories: item.story })
       }}
     >
       <Text style={styles.leadText}>{item.name}</Text>

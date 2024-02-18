@@ -4,18 +4,17 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const StoryScreen = ({route, navigation}) => {
     
-    const { invId, levelId, dimension, words, minutes } = route.params;
+    const { invId, levelId, dimension, words, minutes, stories } = route.params;
 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
-  const stories = [
-    'Detective Word was assigned a crucial case involving a mysterious crime...',
-    'He carefully examined the crime scene, looking for any clues that could lead him to the truth...',
-    'As Detective Word prepared to interview the key witness, he felt a mix of anticipation and determination...',
-    'Mr. Talbot, a person of interest in the investigation, had valuable information that could crack the case wide open...',
-    'With a notepad in hand, Detective Smith approached the witness, ready to uncover the hidden details of the crime...',
-    // Add more story segments as needed
-  ];
+  // const stories = [
+  //   'Detective Word was assigned a crucial case involving a mysterious crime...',
+  //   'He carefully examined the crime scene, looking for any clues that could lead him to the truth...',
+  //   'As Detective Word prepared to interview the key witness, he felt a mix of anticipation and determination...',
+  //   'Mr. Talbot, a person of interest in the investigation, had valuable information that could crack the case wide open...',
+  //   'With a notepad in hand, Detective Smith approached the witness, ready to uncover the hidden details of the crime...',
+  // ];
 
   const handleNextStory = () => {
     if (currentStoryIndex < stories.length - 1) {

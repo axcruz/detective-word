@@ -13,7 +13,7 @@ const getUserPrefs = async (playerId) => {
           prefsQuerySnapshot.forEach((doc) => {
             prefs.push({ id: doc.id, ...doc.data() });
           });
-          return prefs;
+          return prefs[0];
         }
 
 
