@@ -21,6 +21,7 @@ const RegistrationScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const themeStyles = getThemeStyles(useColorScheme());
@@ -43,6 +44,7 @@ const RegistrationScreen = ({ navigation }) => {
           const prefsRef = db.collection("prefs");
           prefsRef.add({
             uid: response.user.uid,
+            username: username,
             theme: "light",
             language: "en",
           });
@@ -73,6 +75,15 @@ const RegistrationScreen = ({ navigation }) => {
             placeholderTextColor="#aaaaaa"
             onChangeText={(text) => setEmail(text)}
             value={email}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={[themeStyles.input, styles.input]}
+            placeholder="Username"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(text) => setUsername(text)}
+            value={username}
             underlineColorAndroid="transparent"
             autoCapitalize="none"
           />

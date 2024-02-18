@@ -9,7 +9,7 @@ import {
   useColorScheme,
 } from "react-native";
 
-import {auth} from "../firebase/config"
+import { auth } from "../firebase/config"
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -23,7 +23,7 @@ import SettingsModal from "../components/SettingsModal";
 const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
 
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
   const [leads, setLeads] = useState();
 
   const themeStyles = getThemeStyles(useColorScheme());
@@ -31,10 +31,7 @@ const LeadsScreen = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Retrieving leads...");
-        console.log(auth.currentUser.uid);
         const result = await getLevels(invId, auth.currentUser.uid);
-        console.log(result);
         setLeads(result.levelData);
       } catch (error) {
         // Handle error
@@ -43,28 +40,31 @@ const LeadsScreen = ({ route, navigation }) => {
 
     fetchData();
     setRefreshing(false);
-  }, [invId]);
+  }, [invId, refreshing]);
 
-      // Handle refresh for Flatlist
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 2000); // 2 second pause
-    }, []);
+  // Handle refresh for Flatlist
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000); // 2 second pause
+  }, []);
 
   const renderLeadItem = ({ item }) => (
     <TouchableOpacity
       style={[styles.leadBox]}
       onPress={() => {
-        // navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
-        navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, stories: item.story })
+        if (item.story) {
+          navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, stories: item.story })
+        } else {
+          navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes })
+        }
       }}
     >
       <Text style={styles.leadText}>{item.name}</Text>
       <Ionicons name={item.icon} size={70} color="white" />
-      { item.playerScore != -1 ? (
-      <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
+      {item.playerScore != -1 ? (
+        <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
       ) : (
         <Text style={styles.leadText}></Text>
       )
@@ -110,6 +110,8 @@ const LeadsScreen = ({ route, navigation }) => {
           <View style={{ margin: 5 }}>
             <FlatList
               data={leads}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
               renderItem={renderLeadItem}
               keyExtractor={(item) => item.id.toString()}
               numColumns={2}

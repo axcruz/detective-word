@@ -43,6 +43,7 @@ const StoryScreen = ({route, navigation}) => {
       </View>
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
