@@ -23,12 +23,17 @@ const savePlayerScore = async (invId, levelId, playerId, score) => {
         timestamp: new Date(),
       });
     } else {
-      // If the document exists, update the existing score
+      // If the document exists, update the existing score if the score is higher
       const docId = existingScore.docs[0].id;
-      await scoresRef.doc(docId).update({
-        score,
-        timestamp: new Date(),
-      });
+      const prevScore = existingScore.docs[0].score;
+
+      if (score > prevScore) {
+        await scoresRef.doc(docId).update({
+          score,
+          timestamp: new Date(),
+        });
+      }
+      
     }
 
     console.log("Score saved successfully!");

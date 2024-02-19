@@ -32,8 +32,9 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [offsetY, setOffsetY] = useState(0);
   const [screenWidth, setScreenWidth] = useState(0);
   const [cellSizeCalc, setCellSizeCalc] = useState(0);
-  //const [hints, setHints] = useState(3);
+  const [hints, setHints] = useState(3);
   const [showClueModal, setShowClueModal] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(null);
 
   const gridRef = useRef(null); // Create a ref
   const selectedCellsRef = useRef(selectedCells);
@@ -90,7 +91,6 @@ const PuzzleScreen = ({ route, navigation }) => {
         setScreenWidth(width);
         setOffsetY(pageY);
         setCellSizeCalc(Math.floor(width / dimension));
-        console.log(cellSizeCalc);
       });
     }
   };
@@ -111,7 +111,6 @@ const PuzzleScreen = ({ route, navigation }) => {
     const cellSize = cellSizeCalc
     const columnIndex = Math.floor((x - offsetX) / cellSize);
     const rowIndex = Math.floor((y - offsetY) / cellSize);
-    console.log("Drag", x, y, offsetY, rowIndex, columnIndex);
     if (
       rowIndex >= 0 &&
       rowIndex < grid.length &&
@@ -173,7 +172,6 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   const handlePanResponderGrant = (event, gestureState) => {
     setSelectedCells([]);
-    console.log("Drag start");
     const { x0, y0 } = gestureState;
     handleCellDrag(x0, y0);
   };
@@ -184,11 +182,9 @@ const PuzzleScreen = ({ route, navigation }) => {
   };
 
   const onPanResponderRelease = () => {
-    console.log("Drag end");
     // Check if the selectedWord forms a valid word (implement your own logic)
     const word = selectedWord.map(({ letter }) => letter).join("");
     const upperWord = word.toUpperCase();
-    console.log("Selected Word:", word);
 
     // Check if the selected word (ignoring case) is one of the answer words
     if (
@@ -217,16 +213,42 @@ const PuzzleScreen = ({ route, navigation }) => {
     onPanResponderRelease,
   });
 
-  // Function to provide a clue
+  // Show the clue modal
   const handleCluePress = () => {
     setShowClueModal(true);
   };
 
-  // Function to close the clue modal
+  // Close the clue modal
   const closeClueModal = () => {
     setShowClueModal(false);
   };
 
+  const handleHintPress = () => {
+    // Find indices with non-empty and non-undefined values in the solutionArray
+    const nonEmptyIndices = [];
+    for (let i = 0; i < solution.length; i++) {
+      for (let j = 0; j < solution[i].length; j++) {
+        if (solution[i][j] !== "" 
+        && solution[i][j] !== undefined
+        && !answerCells.some((cell) => cell.row === i && cell.col === j)
+        ) {
+          nonEmptyIndices.push({ row: i, col: j });
+        }
+      }
+    }
+
+    // If there are non-empty indices, choose a random index from them
+    if (nonEmptyIndices.length > 0) {
+      const randomIndex = Math.floor(Math.random() * nonEmptyIndices.length);
+      const { row, col } = nonEmptyIndices[randomIndex];
+
+      // Highlight the letter at the chosen index
+      setHighlightedIndex(row * dimension + col);
+
+    // Decrease the hints count
+    setHints(hints - 1);
+    }
+  };
 
   return (
     <View style={[themeStyles.container]}>
@@ -283,6 +305,7 @@ const PuzzleScreen = ({ route, navigation }) => {
                       answerCells.some(
                         ({ row, col }) => row === index && col === colIndex
                       ) && styles.answerCell,
+                      highlightedIndex === index * dimension + colIndex && styles.highlightedCell,
                       selectedCells.some(
                         ({ row, col }) => row === index && col === colIndex
                       ) && styles.selectedCell,
@@ -324,6 +347,14 @@ const PuzzleScreen = ({ route, navigation }) => {
         >
           <Ionicons name="bulb-outline" size={18} color="white" />
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[themeStyles.secondaryButton, { margin: 5, }, hints <= 0 && styles.disabledButton,]}
+          onPress={handleHintPress}
+          disabled={hints <= 0}
+           
+        >
+          <Ionicons name="finger-print" size={18} color="white" />
+        </TouchableOpacity>
 
       </View>
 
@@ -346,11 +377,11 @@ const PuzzleScreen = ({ route, navigation }) => {
         animationType="fade"
         onRequestClose={closeClueModal}
       >
-        <TouchableOpacity style={[themeStyles.modalView, { backgroundColor: 'rgba(52, 52, 52, 0.9)' }]} 
-        onPress={closeClueModal}>
+        <TouchableOpacity style={[themeStyles.modalView, { backgroundColor: 'rgba(52, 52, 52, 0.9)' }]}
+          onPress={closeClueModal}>
           <Text style={[themeStyles.text, { color: "white" }]}>{clue}
           </Text>
-    </TouchableOpacity>
+        </TouchableOpacity>
       </Modal >
 
     </View >
@@ -371,6 +402,12 @@ const styles = StyleSheet.create({
   },
   answerCell: {
     backgroundColor: colors.success,
+  },
+  highlightedCell: {
+    backgroundColor: colors.success,
+  },
+  disabledButton: {
+    opacity: 0.3,
   },
 });
 

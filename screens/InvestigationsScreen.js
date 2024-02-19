@@ -6,6 +6,7 @@ import {
     Text,
     TouchableOpacity,
     FlatList,
+    Image,
     RefreshControl,
     ActivityIndicator,
     useColorScheme,
@@ -34,8 +35,9 @@ const InvestigationsScreen = ({ route, navigation }) => {
         if (auth.currentUser) {
             const fetchInvestigations = async () => {
                 try {
-                    const allInvestigations = await getInvestigations();
+                    const allInvestigations = await getInvestigations(auth.currentUser.uid);
                     setInvestigations(allInvestigations);
+                    console.log(allInvestigations);
                 } catch (error) {
                     // Handle error
                 }
@@ -63,22 +65,51 @@ const InvestigationsScreen = ({ route, navigation }) => {
                             style={[
                                 themeStyles.card,
                                 {
-                                    flexDirection: "row",
+                                    flexDirection: "column",
                                     alignItems: "center",
                                     justifyContent: "space-between",
                                     marginTop: 10,
                                     marginBottom: 2,
                                 },
                             ]}
-                            onPress={() => {navigation.navigate("Leads", { invId: item.id })}}
+                            onPress={() => { navigation.navigate("Leads", { invId: item.id }) }}
                         >
-                            <Ionicons name="folder" size={24} style={themeStyles.text} />
-                            <Text style={[themeStyles.titleText, { width: "80%" }]}
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                            >
-                                {item.name}
-                            </Text>
+                            {item.cover_image ? (
+                                <View style={{position: "relative", width: "100%", height: 250}}>
+                                <Image
+                                    source={{ uri: item.cover_image }}
+                                    style={{ width: "100%", height: 250, borderRadius: 5 }}
+                                />
+                                {item.totalLevelsCompleted === item.level_count && (
+                                    <Image
+                                        source={require('../assets/solved-stamp.png')}
+                                        style={[{position: "absolute",
+                                        resizeMode: "contain",
+                                        backgroundColor: "transparent",
+                                        top: '50%',
+                                        left: '50%',
+                                        marginLeft: 25, // Adjust the margin based on half of the width
+                                        marginTop: -65, // Adjust the margin based on half of the height
+                                            width: 150}]}
+                                    />
+                                )}
+                                </View>
+                            ) : (
+                                <Ionicons name="folder" size={24} style={themeStyles.text} />
+                            )}
+
+                            <View style={{ flex: 2, flexDirection: "row", justifyContent: "space-between", marginTop: 15 }}>
+                                <Text style={[themeStyles.titleText, { flex: 1 }]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >
+                                    {item.name}
+                                </Text>
+                                <Text style={[themeStyles.titleText, { flex: 1, textAlign: "right" }]}>
+                                    {item.totalLevelsCompleted}/{item.level_count}
+                                </Text>
+                            </View>
+
                         </TouchableOpacity>
                     </>
 
@@ -106,14 +137,14 @@ const InvestigationsScreen = ({ route, navigation }) => {
                             borderBottomColor: "gray",
                         }}
                     >
-                                    <TouchableOpacity
-              style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
-              onPress={() => navigation.navigate("Investigations")}
-            >
-              <Ionicons name="briefcase-outline" size={24} color="white" />
-            </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
+                            onPress={() => navigation.navigate("Investigations")}
+                        >
+                            <Ionicons name="briefcase-outline" size={24} color="white" />
+                        </TouchableOpacity>
 
-            <SettingsModal onRefresh={onRefresh} />
+                        <SettingsModal onRefresh={onRefresh} />
 
                     </View>
 
