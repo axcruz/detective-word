@@ -1,6 +1,6 @@
 // GameResultScreen.js
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, useColorScheme, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, useColorScheme, ScrollView,  Image } from "react-native";
 import { auth } from "../firebase/config"
 
 import { getThemeStyles } from "../styles/theme";
@@ -37,11 +37,16 @@ const GameResultScreen = ({ route, navigation }) => {
         </>
 
       ) : (
+        <>
         <Text style={[themeStyles.headerText, {textAlign: "center", marginBottom: 20 }]}>We're out of time...</Text>
+        <Image
+        source={require('../assets/game-over.png')}
+        style={{ width: "100%", height: 250, borderRadius: 5}} />
+   </>
       )}
 
       <TouchableOpacity
-        style={themeStyles.configButton}
+        style={[themeStyles.configButton, {marginTop: 15}]}
         onPress={() => navigation.navigate("Leads", { invId: invId })}
       >
         <Text style={themeStyles.buttonText}>Back to the Investigation</Text>

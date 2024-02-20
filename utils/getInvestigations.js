@@ -26,7 +26,9 @@ const getInvestigations = async (playerId) => {
       // Calculate total levels completed and total score
       scoresSnapshot.forEach((scoreDoc) => {
         const scoreData = scoreDoc.data();
-        totalLevelsCompleted += 1;
+        if (scoreData.score > 0) {
+          totalLevelsCompleted += 1;
+        }
         totalScore += scoreData.score || 0;
       });
 

@@ -33,7 +33,7 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [offsetY, setOffsetY] = useState(0);
   const [screenWidth, setScreenWidth] = useState(0);
   const [cellSizeCalc, setCellSizeCalc] = useState(0);
-  const [hints, setHints] = useState(3);
+  const [hints, setHints] = useState(5);
   const [showClueModal, setShowClueModal] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(null);
   const [isTimeFrozen, setIsTimeFrozen] = useState(false);
@@ -415,7 +415,7 @@ const PuzzleScreen = ({ route, navigation }) => {
 
       <View style={{ margin: 10 }}>
         <Text style={[themeStyles.text, { marginBottom: 5 }]}>
-          Found Words:
+          Found Words: {foundWords.length} out of {words.length}
         </Text>
         <FlatList
           data={foundWords}
