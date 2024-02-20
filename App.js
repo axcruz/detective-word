@@ -76,7 +76,7 @@ const App = () => {
             <Stack.Screen
               name="Puzzle"
               component={PuzzleScreen}
-              options={{ title: "Puzzle", gestureEnabled: false}}
+              options={{ title: "", gestureEnabled: false}}
             />
             <Stack.Screen
               name="GameResult"

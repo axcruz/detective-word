@@ -7,7 +7,7 @@ import {
   StyleSheet,
   useColorScheme,
   PanResponder,
-  Modal
+  Modal,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -18,7 +18,8 @@ import { getLevels, createWordSearch } from "../utils";
 import { getThemeStyles, colors } from "../styles/theme";
 
 const PuzzleScreen = ({ route, navigation }) => {
-  const { invId, levelId, dimension, words, minutes, clue, story_end } = route.params;
+  const { invId, levelId, dimension, words, minutes, clue, story_end } =
+    route.params;
 
   const [gameStatus, setGameStatus] = useState("play");
   const [timeRemaining, setTimeRemaining] = useState(minutes * 60);
@@ -35,6 +36,8 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [hints, setHints] = useState(3);
   const [showClueModal, setShowClueModal] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(null);
+  const [isTimeFrozen, setIsTimeFrozen] = useState(false);
+  const [freezeTimeCountdown, setFreezeTimeCountdown] = useState(0);
 
   const gridRef = useRef(null); // Create a ref
   const selectedCellsRef = useRef(selectedCells);
@@ -60,20 +63,27 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (gameStatus === "play") {
+      if (gameStatus === "play" && !isTimeFrozen) {
         setTimeRemaining((prevTime) => prevTime - 1);
+      }
+      if (isTimeFrozen) {
+        if (freezeTimeCountdown > 0) {
+          setFreezeTimeCountdown((prevCountdown) => prevCountdown - 1);
+        } else {
+          setIsTimeFrozen(false);
+        }
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [gameStatus, isTimeFrozen, freezeTimeCountdown]);
 
   // If time is up go to game result
   useEffect(() => {
     if (timeRemaining <= 0 && gameStatus === "play") {
       handleGameEnd("failure", timeRemaining);
     }
-  },);
+  });
 
   // Handle refresh for Flatlist
   const onRefresh = useCallback(() => {
@@ -97,18 +107,17 @@ const PuzzleScreen = ({ route, navigation }) => {
 
   const handleGameEnd = (gameStatus, gameScore) => {
     setGameStatus("end");
-    navigation.navigate("GameResult",
-      {
-        invId: invId,
-        levelId: levelId,
-        status: gameStatus,
-        score: gameScore,
-        story_end: story_end
-      });
+    navigation.navigate("GameResult", {
+      invId: invId,
+      levelId: levelId,
+      status: gameStatus,
+      score: gameScore,
+      story_end: story_end,
+    });
   };
 
   const handleCellDrag = (x, y) => {
-    const cellSize = cellSizeCalc
+    const cellSize = cellSizeCalc;
     const columnIndex = Math.floor((x - offsetX) / cellSize);
     const rowIndex = Math.floor((y - offsetY) / cellSize);
     if (
@@ -137,7 +146,7 @@ const PuzzleScreen = ({ route, navigation }) => {
           // Check for diagonal drag
           (lastSelectedIndex >= 0 &&
             Math.abs(rowIndex - selectedWord[lastSelectedIndex].rowIndex) <=
-            1 &&
+              1 &&
             Math.abs(
               columnIndex - selectedWord[lastSelectedIndex].columnIndex
             ) <= 1))
@@ -146,7 +155,7 @@ const PuzzleScreen = ({ route, navigation }) => {
           !diagRemoved &&
           lastSelectedIndex >= 1 &&
           Math.abs(rowIndex - selectedWord[lastSelectedIndex - 1].rowIndex) <=
-          1 &&
+            1 &&
           Math.abs(
             columnIndex - selectedWord[lastSelectedIndex - 1].columnIndex
           ) <= 1
@@ -216,6 +225,9 @@ const PuzzleScreen = ({ route, navigation }) => {
   // Show the clue modal
   const handleCluePress = () => {
     setShowClueModal(true);
+
+    // Decrease the hints count
+    setHints(hints - 1);
   };
 
   // Close the clue modal
@@ -228,9 +240,10 @@ const PuzzleScreen = ({ route, navigation }) => {
     const nonEmptyIndices = [];
     for (let i = 0; i < solution.length; i++) {
       for (let j = 0; j < solution[i].length; j++) {
-        if (solution[i][j] !== "" 
-        && solution[i][j] !== undefined
-        && !answerCells.some((cell) => cell.row === i && cell.col === j)
+        if (
+          solution[i][j] !== "" &&
+          solution[i][j] !== undefined &&
+          !answerCells.some((cell) => cell.row === i && cell.col === j)
         ) {
           nonEmptyIndices.push({ row: i, col: j });
         }
@@ -245,8 +258,19 @@ const PuzzleScreen = ({ route, navigation }) => {
       // Highlight the letter at the chosen index
       setHighlightedIndex(row * dimension + col);
 
-    // Decrease the hints count
-    setHints(hints - 1);
+      // Decrease the hints count
+      setHints(hints - 1);
+    }
+  };
+
+  const handleFreezeTimePress = () => {
+    if (hints > 0 && !isTimeFrozen) {
+      // Freeze the time for 15 seconds
+      setIsTimeFrozen(true);
+      setFreezeTimeCountdown(15);
+
+      // Decrease the hints count
+      setHints(hints - 1);
     }
   };
 
@@ -269,7 +293,6 @@ const PuzzleScreen = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <SettingsModal onRefresh={onRefresh} />
-
       </View>
 
       <View
@@ -280,49 +303,54 @@ const PuzzleScreen = ({ route, navigation }) => {
           borderBottomColor: "gray",
         }}
       >
-        <View
-          ref={gridRef}
-          {...panResponder.panHandlers}
-          onLayout={handleGridRender}
-        >
-          <FlatList
-            data={grid}
-            renderItem={({ item, index }) => (
-              <View key={index} style={{ flexDirection: "row" }}>
-                {item.map((cell, colIndex) => (
-                  <TouchableOpacity
-                    key={colIndex}
-                    style={[
-                      {
-                        width: cellSizeCalc - 10,
-                        height: cellSizeCalc - 10,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderWidth: 1,
-                        borderColor: "black",
-                        margin: 4,
-                      },
-                      answerCells.some(
-                        ({ row, col }) => row === index && col === colIndex
-                      ) && styles.answerCell,
-                      highlightedIndex === index * dimension + colIndex && styles.highlightedCell,
-                      selectedCells.some(
-                        ({ row, col }) => row === index && col === colIndex
-                      ) && styles.selectedCell,
-                    ]}
-                    onPress={() => {
-                      // Handle cell press logic
-                    }}
-                  >
-                    <Text style={themeStyles.text}>{cell}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            onScroll={() => { }}
-          />
-        </View>
+        {gridRef ? (
+          <View
+            ref={gridRef}
+            {...panResponder.panHandlers}
+            onLayout={handleGridRender}
+          >
+            <FlatList
+              data={grid}
+              renderItem={({ item, index }) => (
+                <View key={index} style={{ flexDirection: "row" }}>
+                  {item.map((cell, colIndex) => (
+                    <TouchableOpacity
+                      key={colIndex}
+                      style={[
+                        {
+                          width: cellSizeCalc - 10,
+                          height: cellSizeCalc - 10,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderWidth: 1,
+                          borderColor: "black",
+                          margin: 4,
+                        },
+                        answerCells.some(
+                          ({ row, col }) => row === index && col === colIndex
+                        ) && styles.answerCell,
+                        highlightedIndex === index * dimension + colIndex &&
+                          styles.highlightedCell,
+                        selectedCells.some(
+                          ({ row, col }) => row === index && col === colIndex
+                        ) && styles.selectedCell,
+                      ]}
+                      onPress={() => {
+                        // Handle cell press logic
+                      }}
+                    >
+                      <Text style={themeStyles.text}>{cell}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              onScroll={() => {}}
+            />
+          </View>
+        ) : (
+          <LoadingIndicator />
+        )}
       </View>
 
       <Text
@@ -331,43 +359,73 @@ const PuzzleScreen = ({ route, navigation }) => {
 
       <View
         style={{
-          flexDirection: "row",
           paddingVertical: 10,
           marginVertical: 10,
           borderBottomWidth: 1,
           borderBottomColor: "gray",
           borderTopWidth: 1,
           borderTopColor: "gray",
-          justifyContent: "center"
         }}
       >
-        <TouchableOpacity
-          style={[themeStyles.tertiaryButton, { margin: 5 }]}
-          onPress={handleCluePress}
+        <Text style={{ textAlign: "right", marginRight: 10 }}>
+          Insight: {hints}
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginTop: -20,
+          }}
         >
-          <Ionicons name="bulb-outline" size={18} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[themeStyles.secondaryButton, { margin: 5, }, hints <= 0 && styles.disabledButton,]}
-          onPress={handleHintPress}
-          disabled={hints <= 0}
-           
-        >
-          <Ionicons name="finger-print" size={18} color="white" />
-        </TouchableOpacity>
-
+          <TouchableOpacity
+            style={[
+              themeStyles.tertiaryButton,
+              { margin: 5 },
+              hints <= 0 && styles.disabledButton,
+            ]}
+            onPress={handleCluePress}
+            disabled={hints <= 0}
+          >
+            <Ionicons name="bulb-outline" size={18} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              themeStyles.secondaryButton,
+              { margin: 5 },
+              hints <= 0 && styles.disabledButton,
+            ]}
+            onPress={handleHintPress}
+            disabled={hints <= 0}
+          >
+            <Ionicons name="finger-print" size={18} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              themeStyles.secondaryButton,
+              { backgroundColor: "#86d6d8", margin: 5 },
+              (hints <= 0 || isTimeFrozen) && styles.disabledButton,
+            ]}
+            onPress={handleFreezeTimePress}
+            disabled={hints <= 0 || isTimeFrozen}
+          >
+            <Ionicons name="snow" size={18} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={{ margin: 15 }}>
+      <View style={{ margin: 10 }}>
         <Text style={[themeStyles.text, { marginBottom: 5 }]}>
           Found Words:
         </Text>
         <FlatList
           data={foundWords}
           renderItem={({ item }) => (
-            <Text style={[themeStyles.text, { margin: 2, fontWeight: 'bold' }]}>{item}</Text>
+            <Text style={[themeStyles.text, { margin: 5, fontWeight: "bold" }]}>
+              {item}
+            </Text>
           )}
           keyExtractor={(item) => item}
+          numColumns={2} // Set the number of columns to 2
         />
       </View>
 
@@ -377,15 +435,17 @@ const PuzzleScreen = ({ route, navigation }) => {
         animationType="fade"
         onRequestClose={closeClueModal}
       >
-        <TouchableOpacity style={[themeStyles.modalView, { backgroundColor: 'rgba(52, 52, 52, 0.9)' }]}
-          onPress={closeClueModal}>
-          <Text style={[themeStyles.text, { color: "white" }]}>{clue}
-          </Text>
+        <TouchableOpacity
+          style={[
+            themeStyles.modalView,
+            { backgroundColor: "rgba(52, 52, 52, 0.9)" },
+          ]}
+          onPress={closeClueModal}
+        >
+          <Text style={[themeStyles.text, { color: "white" }]}>{clue}</Text>
         </TouchableOpacity>
-      </Modal >
-
-    </View >
-
+      </Modal>
+    </View>
   );
 };
 
