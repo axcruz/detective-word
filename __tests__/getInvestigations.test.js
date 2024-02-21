@@ -1,65 +1,82 @@
-// getInvestigations.test.js
-import { getInvestigations } from "../utils";
-import { db } from "../firebase/config";
+import {getInvestigations} from '../utils';
+import { db } from '../firebase/config';
 
-// Mocking the Firebase module
-jest.mock("../firebase/config", () => ({
+jest.mock('../firebase/config', () => ({
   db: {
-    collection: jest.fn(() => ({
-      orderBy: jest.fn(() => ({
-        get: jest.fn(() => ({
-          forEach: jest.fn((callback) => {
-            // Simulate iterating over mock documents
-            [
-              {
-                id: "1",
-                data: () => ({
-                  case_num: 1,
-                  name: "Investigation 1",
-                  // Add other properties as needed
-                }),
-              },
-              {
-                id: "2",
-                data: () => ({
-                  case_num: 2,
-                  name: "Investigation 2",
-                  // Add other properties as needed
-                }),
-              },
-              // Add more mock documents as needed
-            ].forEach(callback);
-          }),
-        })),
-      })),
-    })),
+    collection: jest.fn(),
   },
 }));
 
-describe("getInvestigations", () => {
-  it("should retrieve investigations data", async () => {
-    const result = await getInvestigations();
+const mockFirestore = () => {
+  const data = {
+    investigations: [
+      { id: 'inv1', case_num: 1 }
+    ],
+    scores: {
+      inv1: [{ playerId: 'player123', levelId: 'lvl1-1', score: 100 }, {playerId: 'player123', levelId: 'lvl1-2', score: 50 }]
+    },
+  };
 
-    // Check if the result has the expected structure
-    expect(result).toEqual([
-      {
-        id: "1",
-        case_num: 1,
-        name: "Investigation 1",
-        // Add other properties as needed
+  db.collection.mockImplementation((collectionName) => {
+    return {
+      orderBy: () => {
+        return {
+          get: async () => {
+            if (collectionName === 'investigations') {
+              return { docs: data.investigations.map((inv) => ({ id: inv.id, data: () => inv })) };
+            } else if (collectionName === 'scores') {
+              return { docs: data.investigations.map((inv) => ({ id: inv.id, data: () => ({}) })) };
+            }
+          },
+        };
       },
-      {
-        id: "2",
-        case_num: 2,
-        name: "Investigation 2",
-        // Add other properties as needed
+      where: () => {
+        return {
+          where: () => {
+            return {
+              get: async () => {
+                const invId = 'inv1'; // Assuming only one investigation in this example
+                return {
+                  forEach: (callback) => {
+                    data.scores[invId].forEach((scoreData) => {
+                      callback({ data: () => scoreData });
+                    });
+                  },
+                };
+              },
+            };
+          },
+        };
       },
-      // Add more expected investigation data as needed
-    ]);
+    };
+  });
+};
 
-    // Check if the mocked functions were called with the expected parameters
-    expect(db.collection).toHaveBeenCalledWith("investigations");
-
+describe('getInvestigations', () => {
+  beforeAll(() => {
+    mockFirestore();
   });
 
+  it('fetches investigations and calculates total levels completed and total score', async () => {
+    const playerId = 'player123';
+    const result = await getInvestigations(playerId);
+
+    // Expected result based on the mocked data
+    const expectedResult = [
+      { id: 'inv1', case_num: 1, totalLevelsCompleted: 2, totalScore: 150 }
+    ];
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('throws an error if there is an issue fetching investigations', async () => {
+    db.collection.mockImplementation(() => {
+      throw new Error('Firebase fetch error');
+    });
+
+    const playerId = 'player123';
+
+    // Assert that the function throws an error
+    await expect(getInvestigations(playerId)).rejects.toThrow('Firebase fetch error');
+  });
 });

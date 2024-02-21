@@ -7,11 +7,22 @@ const getScoreboard = async (invId) => {
       .where("invId", "==", invId)
       .get();
 
+         // Extract unique playerIds from scores
+    const playerIdsSet = new Set();
+    scoresQuerySnapshot.forEach((scoreDoc) => {
+      const scoreData = scoreDoc.data();
+      const playerId = scoreData.playerId;
+      playerIdsSet.add(playerId);
+    });
+
     // Create a map to store the total scores for each player along with usernames
     const playerScoresMap = new Map();
 
     // Fetch usernames for each playerId from the "prefs" table
-    const prefsQuerySnapshot = await db.collection("prefs").get();
+    const prefsQuerySnapshot = await db.collection("prefs")
+      .where("uid", "in", Array.from(playerIdsSet))  // Query for prefs with uid in the set of playerIds
+      .get();
+
     const usernameMap = new Map();
     prefsQuerySnapshot.forEach((prefsDoc) => {
       const prefsData = prefsDoc.data();

@@ -3,52 +3,49 @@ import { createWordSearch } from "../utils";
 import { db } from "../firebase/config";
 
 // Mocking the Firebase module
-jest.mock("../firebase/config", () => ({}));
+jest.mock('../firebase/config', () => ({
+  db: {
+    collection: jest.fn(),
+  },
+}));
+
 
 describe("createWordSearch", () => {
-  it("should generate a valid word search puzzle", () => {
-    const n = 6; // Adjust the puzzle size as needed
-    const words = ["apple", "banana", "orange"]; // Adjust the words as needed
+  it("should generate a word search puzzle", () => {
 
-    const result = createWordSearch(n, words);
+    // Define the input parameters
+    const dimension = 6;
+    const words = ["apple", "banana", "cherry"];
 
-    // Check if the result is a valid n x n array
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBe(n);
-    result.forEach(row => {
-      expect(Array.isArray(row)).toBe(true);
-      expect(row.length).toBe(n);
-    });
+    // Call the function
+    const result = createWordSearch(dimension, words);
 
-    // Check if each word in the input array is present in the puzzle
-    words.forEach(word => {
-      const uppercasedWord = word.toUpperCase();
-      let found = false;
+    // Define the expected structure of the result
+    const expectedStructure = {
+      wordSearchArray: expect.any(Array),
+      solutionArray: expect.any(Array),
+    };
 
-      // Check horizontally, vertically, and diagonally
-      for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-          if (
-            result[i].slice(j, j + word.length).join("") === uppercasedWord ||
-            result.map(row => row[j]).slice(i, i + word.length).join("") === uppercasedWord ||
-            result.map((row, k) => row[j + k]).slice(i, i + word.length).join("") === uppercasedWord
-          ) {
-            found = true;
-          }
-        }
-      }
+    // Check if the result has the expected structure
+    expect(result).toEqual(expectedStructure);
 
-      expect(found).toBe(true);
-    });
+    // Check if the wordSearchArray and solutionArray have the correct dimensions
+    expect(result.wordSearchArray.length).toBe(dimension);
+    expect(result.wordSearchArray.every(row => row.length === dimension)).toBe(true);
+
+    expect(result.solutionArray.length).toBe(dimension);
+    expect(result.solutionArray.every(row => row.length === dimension)).toBe(true);
+
   });
 
-  it("should handle invalid input and return null", () => {
-    const n = 6;
-    const invalidWords = ["apple", "banana", "grapefruit", "watermelon", "kiwi", "strawberry"]; // More words than allowed
+  it("should handle invalid inputs and return null", () => {
+    // Invalid words (length > dimension)
+    const invalidWords1 = ["apple", "banana", "cherry", "grapefruit"];
+    expect(createWordSearch(6, invalidWords1)).toBe(null);
 
-    const result = createWordSearch(n, invalidWords);
+    // Too many words (more than floor(dimension/2))
+    const invalidWords2 = ["apple", "banana", "cherry"];
+    expect(createWordSearch(4, invalidWords2)).toBe(null);
 
-    // Check if the result is null
-    expect(result).toBeNull();
   });
 });

@@ -21,7 +21,6 @@ const ScoreboardScreen = ({ route }) => {
       try {
         const scoreboardData = await getScoreboard(invId);
         setScoreboard(scoreboardData);
-        console.log(scoreboardData);
       } catch (error) {
         console.error("Error fetching scoreboard data:", error.message);
       } finally {
