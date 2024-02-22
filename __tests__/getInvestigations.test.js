@@ -35,7 +35,7 @@ const mockFirestore = () => {
           where: () => {
             return {
               get: async () => {
-                const invId = 'inv1'; // Assuming only one investigation in this example
+                const invId = 'inv1';
                 return {
                   forEach: (callback) => {
                     data.scores[invId].forEach((scoreData) => {

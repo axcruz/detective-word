@@ -8,7 +8,7 @@ import {
   useColorScheme,
 } from "react-native";
 
-import { auth } from "../firebase/config"
+import { auth } from "../firebase/config";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -17,7 +17,6 @@ import { getLevels } from "../utils";
 import { getThemeStyles } from "../styles/theme";
 
 import SettingsModal from "../components/SettingsModal";
-
 
 const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
@@ -54,9 +53,27 @@ const LeadsScreen = ({ route, navigation }) => {
       style={[styles.leadBox]}
       onPress={() => {
         if (item.story) {
-          navigation.navigate("Story", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, clue: item.clue, stories: item.story, image: item.story_image, story_end: item.story_result })
+          navigation.navigate("Story", {
+            invId: invId,
+            levelId: item.id,
+            dimension: item.dimension,
+            words: item.words,
+            minutes: item.minutes,
+            clue: item.clue,
+            stories: item.story,
+            image: item.story_image,
+            story_end: item.story_result,
+          });
         } else {
-          navigation.navigate("Puzzle", { invId: invId, levelId: item.id, dimension: item.dimension, words: item.words, minutes: item.minutes, clue: item.clue, story_end: item.story_result })
+          navigation.navigate("Puzzle", {
+            invId: invId,
+            levelId: item.id,
+            dimension: item.dimension,
+            words: item.words,
+            minutes: item.minutes,
+            clue: item.clue,
+            story_end: item.story_result,
+          });
         }
       }}
     >
@@ -66,8 +83,7 @@ const LeadsScreen = ({ route, navigation }) => {
         <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
       ) : (
         <Text style={styles.leadText}></Text>
-      )
-      }
+      )}
     </TouchableOpacity>
   );
 
@@ -89,22 +105,27 @@ const LeadsScreen = ({ route, navigation }) => {
               style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
               onPress={() => navigation.navigate("Investigations")}
             >
-              <Ionicons name="file-tray-stacked-outline" size={24} color="white" />
+              <Ionicons
+                name="file-tray-stacked-outline"
+                size={24}
+                color="white"
+              />
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]}
-              onPress={() => navigation.navigate("Scoreboard", { invId: invId, playerId: auth.currentUser.uid })}
+              onPress={() =>
+                navigation.navigate("Scoreboard", {
+                  invId: invId,
+                  playerId: auth.currentUser.uid,
+                })
+              }
             >
               <Ionicons name="trophy" size={24} color="white" />
             </TouchableOpacity>
 
-
             <SettingsModal onRefresh={onRefresh} />
-
           </View>
-
-
 
           <View style={{ margin: 5 }}>
             <FlatList
@@ -131,13 +152,13 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#3498db", // Replace with your preferred background color
+    backgroundColor: "#3498db",
     borderRadius: 5,
-    height: 180
+    height: 180,
   },
   leadImage: {
     width: "100%",
-    height: 100, // Adjust the height as needed
+    height: 100,
     borderRadius: 5,
     marginBottom: 5,
   },

@@ -3,11 +3,12 @@ import { db } from "../firebase/config";
 const getScoreboard = async (invId) => {
   try {
     // Retrieve all scores for the investigation
-    const scoresQuerySnapshot = await db.collection("scores")
+    const scoresQuerySnapshot = await db
+      .collection("scores")
       .where("invId", "==", invId)
       .get();
 
-         // Extract unique playerIds from scores
+    // Extract unique playerIds from scores
     const playerIdsSet = new Set();
     scoresQuerySnapshot.forEach((scoreDoc) => {
       const scoreData = scoreDoc.data();
@@ -19,8 +20,9 @@ const getScoreboard = async (invId) => {
     const playerScoresMap = new Map();
 
     // Fetch usernames for each playerId from the "prefs" table
-    const prefsQuerySnapshot = await db.collection("prefs")
-      .where("uid", "in", Array.from(playerIdsSet))  // Query for prefs with uid in the set of playerIds
+    const prefsQuerySnapshot = await db
+      .collection("prefs")
+      .where("uid", "in", Array.from(playerIdsSet)) // Query for prefs with uid in the set of playerIds
       .get();
 
     const usernameMap = new Map();

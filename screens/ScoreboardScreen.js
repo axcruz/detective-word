@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, useColorScheme } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  useColorScheme,
+} from "react-native";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -31,52 +36,50 @@ const ScoreboardScreen = ({ route }) => {
     fetchScoreboardData();
   }, [invId]);
 
-
-    // Utility to render score card
-    const renderItem = ({ item }) => {
-
-      return (
-          <React.Fragment>
-              {item ? (
-                  <>
-                      <View
-                          style={[
-                              themeStyles.card,
-                              {
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  marginTop: 10,
-                                  marginBottom: 2,
-                              },
-                          ]}
-                      >
-                          <Ionicons name="ribbon" size={24} style={themeStyles.text} />
-                          <Text style={[themeStyles.text, {marginHorizontal: 5}]}>
-                            Rank #{item.rank}
-                            </Text>
-                          <Text style={[themeStyles.text, { textAlign:"center", width: "40%" }]}
-                              numberOfLines={1}
-                              ellipsizeMode="tail"
-                          >
-                              {item.username}
-                          </Text>
-                          <Text style={themeStyles.text}>{item.totalScore}</Text>
-                      </View>
-                  </>
-
-              ) : (
-                  <LoadingIndicator />
-              )}
-          </React.Fragment>
-      );
+  // Utility to render score card
+  const renderItem = ({ item }) => {
+    return (
+      <React.Fragment>
+        {item ? (
+          <>
+            <View
+              style={[
+                themeStyles.card,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginTop: 10,
+                  marginBottom: 2,
+                },
+              ]}
+            >
+              <Ionicons name="ribbon" size={24} style={themeStyles.text} />
+              <Text style={[themeStyles.text, { marginHorizontal: 5 }]}>
+                Rank #{item.rank}
+              </Text>
+              <Text
+                style={[
+                  themeStyles.text,
+                  { textAlign: "center", width: "40%" },
+                ]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.username}
+              </Text>
+              <Text style={themeStyles.text}>{item.totalScore}</Text>
+            </View>
+          </>
+        ) : (
+          <LoadingIndicator />
+        )}
+      </React.Fragment>
+    );
   };
 
-
-
-
   if (loading) {
-    return <LoadingIndicator />
+    return <LoadingIndicator />;
   }
 
   return (

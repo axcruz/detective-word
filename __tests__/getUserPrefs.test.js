@@ -11,7 +11,6 @@ jest.mock("../firebase/config", () => ({
             callback({
               id: "testId",
               data: () => ({
-                /* Mocked user preferences data */
               }),
             })
           ),
@@ -31,7 +30,6 @@ describe("getUserPrefs", () => {
 
     // Expected user preferences data
     const expectedPrefs = {
-      /* Expected user preferences data */
       "id": "testId", 
     };
 

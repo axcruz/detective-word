@@ -21,7 +21,6 @@ jest.mock("../firebase/config", () => ({
                 {
                   id: "1",
                   data: () => ({
-                    /* Your mock level data */
                   }),
                 },
               ],
@@ -47,7 +46,6 @@ describe("getLevels", () => {
       levelData: [
         {
           id: "1",
-          /* Your mock level data */
           playerScore: -1,
         },
       ],

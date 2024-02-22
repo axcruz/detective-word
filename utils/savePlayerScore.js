@@ -1,4 +1,3 @@
-// utils/firebaseUtils.js
 import { db } from "../firebase/config";
 
 // Utility function to save the player's score for a level
@@ -33,7 +32,6 @@ const savePlayerScore = async (invId, levelId, playerId, score) => {
           timestamp: new Date(),
         });
       }
-      
     }
 
     console.log("Score saved successfully!");

@@ -1,7 +1,7 @@
 // App.js
 
 import React, { useEffect, useState } from "react";
-import { View, useColorScheme, } from "react-native";
+import { View, useColorScheme } from "react-native";
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -31,11 +31,9 @@ import ScoreboardScreen from "./screens/ScoreboardScreen";
 
 import { auth } from "./firebase/config";
 
-
 const Stack = createStackNavigator();
 
 const App = () => {
-
   const [initializing, setInitializing] = useState(true);
   const [theme, setTheme] = useState(useColorScheme());
   const [currentUser, setCurrentUser] = useState();
@@ -71,24 +69,27 @@ const App = () => {
             <Stack.Screen
               name="Story"
               component={StoryScreen}
-              options={{ title: "", gestureEnabled: false}}
+              options={{ title: "", gestureEnabled: false }}
             />
             <Stack.Screen
               name="Puzzle"
               component={PuzzleScreen}
-              options={{ title: "", gestureEnabled: false}}
+              options={{ title: "", gestureEnabled: false }}
             />
             <Stack.Screen
               name="GameResult"
               component={GameResultScreen}
-              options={{ title: "", gestureEnabled: false,  headerLeft: ()=> null}}
+              options={{
+                title: "",
+                gestureEnabled: false,
+                headerLeft: () => null,
+              }}
             />
             <Stack.Screen
               name="Scoreboard"
               component={ScoreboardScreen}
-              options={{ title: "Scoreboard", gestureEnabled: false}}
+              options={{ title: "Scoreboard", gestureEnabled: false }}
             />
-
           </Stack.Navigator>
         ) : (
           <Stack.Navigator>

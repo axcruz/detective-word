@@ -24,7 +24,7 @@ const SettingsModal = (props) => {
     const fetchSettings = async () => {
       setUser(auth.currentUser);
       setPref(await getUserPrefs(auth.currentUser.uid));
-    }
+    };
     fetchSettings();
   }, []);
 

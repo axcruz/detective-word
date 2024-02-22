@@ -35,10 +35,5 @@ describe("savePlayerScore", () => {
 
     // Check if the Firebase functions were called with the expected parameters
     expect(db.collection).toHaveBeenCalledWith("scores");
-
-    // Optionally, you can check if the update function is called when a document already exists
-    // expect(db.collection().doc().update).toHaveBeenCalledTimes(0);
   });
-
-  // Add more test cases as needed
 });

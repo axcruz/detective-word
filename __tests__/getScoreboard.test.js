@@ -1,4 +1,4 @@
-import { getScoreboard } from "../utils"; // Replace with the correct path
+import { getScoreboard } from "../utils";
 import { db } from "../firebase/config";
 
 jest.mock("../firebase/config", () => ({
@@ -27,7 +27,6 @@ jest.mock("../firebase/config", () => ({
                                     score: 75,
                                 }),
                             },
-                            // Add more mock data as needed
                         ].forEach(callback);
                     },
                 })),
@@ -55,7 +54,6 @@ describe("getScoreboard", () => {
                 username: "User1",
                 rank: 2,
             },
-            // Add more assertions for additional players
         ]);
     });
 });
