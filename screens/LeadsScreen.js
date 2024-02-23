@@ -7,16 +7,12 @@ import {
   StyleSheet,
   useColorScheme,
 } from "react-native";
-
-import { auth } from "../firebase/config";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import LoadingIndicator from "../components/LoadingIndicator";
 import { getLevels } from "../utils";
-import { getThemeStyles } from "../styles/theme";
-
+import { getThemeStyles, colors } from "../styles/theme";
 import SettingsModal from "../components/SettingsModal";
+import { auth } from "../firebase/config";
 
 const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
@@ -26,72 +22,88 @@ const LeadsScreen = ({ route, navigation }) => {
 
   const themeStyles = getThemeStyles(useColorScheme());
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getLevels(invId, auth.currentUser.uid);
-        setLeads(result.levelData);
-      } catch (error) {
-        // Handle error
-      }
-    };
+  const fetchData = useCallback(async () => {
+    try {
+      const result = await getLevels(invId, auth.currentUser.uid);
+      setLeads(result.levelData);
+    } catch (error) {
+      // Handle error
+    } finally {
+      setRefreshing(false);
+    }
+  }, [invId]);
 
-    fetchData();
-    setRefreshing(false);
-  }, [invId, refreshing]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call the fetchData function when the screen is focused
+      setRefreshing(true);
+      fetchData();
+    });
+
+    // Return the cleanup function to unsubscribe from the event
+    return unsubscribe;
+  }, [navigation, fetchData]);
 
   // Handle refresh for Flatlist
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000); // 2 second pause
+    fetchData();
   }, []);
 
-  const renderLeadItem = ({ item }) => (
-    <TouchableOpacity
-      style={[styles.leadBox]}
-      onPress={() => {
-        if (item.story) {
-          navigation.navigate("Story", {
-            invId: invId,
-            levelId: item.id,
-            dimension: item.dimension,
-            words: item.words,
-            minutes: item.minutes,
-            clue: item.clue,
-            stories: item.story,
-            image: item.story_image,
-            story_end: item.story_result,
-          });
-        } else {
-          navigation.navigate("Puzzle", {
-            invId: invId,
-            levelId: item.id,
-            dimension: item.dimension,
-            words: item.words,
-            minutes: item.minutes,
-            clue: item.clue,
-            story_end: item.story_result,
-          });
-        }
-      }}
-    >
-      <Text style={styles.leadText}>{item.name}</Text>
-      <Ionicons name={item.icon} size={70} color="white" />
-      {item.playerScore != -1 ? (
-        <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
-      ) : (
-        <Text style={styles.leadText}></Text>
-      )}
-    </TouchableOpacity>
-  );
+  const renderLeadItem = ({ item, index }) => {
+    const isDisabled =
+      index > 0 && leads[index - 1]?.playerScore <= 0 && item.order > 0;
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.leadBox,
+          isDisabled && styles.disabledLeadBox,
+        ]}
+        onPress={() => {
+          if (item.story) {
+            navigation.navigate("Story", {
+              invId: invId,
+              levelId: item.id,
+              dimension: item.dimension,
+              words: item.words,
+              minutes: item.minutes,
+              clue: item.clue,
+              stories: item.story,
+              image: item.story_image,
+              story_end: item.story_result,
+            });
+          } else {
+            navigation.navigate("Puzzle", {
+              invId: invId,
+              levelId: item.id,
+              dimension: item.dimension,
+              words: item.words,
+              minutes: item.minutes,
+              clue: item.clue,
+              story_end: item.story_result,
+            });
+          }
+        }}
+        disabled={isDisabled}
+      >
+        <Text style={styles.leadText}>{item.name}</Text>
+        <Ionicons name={item.icon} size={70} color="white" />
+        {item.playerScore != -1 ? (
+          <Text style={styles.leadText}>Best: {item.playerScore} secs</Text>
+        ) : (
+          <Text style={styles.leadText}></Text>
+        )}
+      </TouchableOpacity>
+    );
+  };
 
   // Main Render
   return (
     <>
       {leads ? (
-        <View style={themeStyles.container}>
+        <View style={[themeStyles.container]}>
           <View
             style={{
               flexDirection: "row",
@@ -127,7 +139,7 @@ const LeadsScreen = ({ route, navigation }) => {
             <SettingsModal onRefresh={onRefresh} />
           </View>
 
-          <View style={{ margin: 5 }}>
+          <View style={{ margin: 5, marginBottom: 50 }}>
             <FlatList
               data={leads}
               refreshing={refreshing}
@@ -152,9 +164,12 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#3498db",
+    backgroundColor: colors.backgroundNeutral,
     borderRadius: 5,
     height: 180,
+  },
+  disabledLeadBox: {
+    opacity: 0.3,
   },
   leadImage: {
     width: "100%",

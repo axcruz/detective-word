@@ -21,20 +21,26 @@ const savePlayerScore = async (invId, levelId, playerId, score) => {
         score,
         timestamp: new Date(),
       });
+      console.log("Best score saved successfully!");
     } else {
       // If the document exists, update the existing score if the score is higher
       const docId = existingScore.docs[0].id;
-      const prevScore = existingScore.docs[0].score;
+      var prevScore = existingScore.docs[0].score;
+
+      if (prevScore === undefined) {
+        prevScore = -1;
+      } 
 
       if (score > prevScore) {
         await scoresRef.doc(docId).update({
           score,
           timestamp: new Date(),
         });
+        console.log("Best score updated successfully!");
       }
     }
 
-    console.log("Score saved successfully!");
+
   } catch (error) {
     console.error("Error saving score:", error.message);
     throw error;

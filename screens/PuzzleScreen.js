@@ -33,7 +33,7 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [offsetY, setOffsetY] = useState(0);
   const [screenWidth, setScreenWidth] = useState(0);
   const [cellSizeCalc, setCellSizeCalc] = useState(0);
-  const [hints, setHints] = useState(5);
+  const [hints, setHints] = useState(4);
   const [showClueModal, setShowClueModal] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(null);
   const [isTimeFrozen, setIsTimeFrozen] = useState(false);

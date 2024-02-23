@@ -50,7 +50,7 @@ const GameResultScreen = ({ route, navigation }) => {
             Score: {score}
           </Text>
 
-          <View style={[themeStyles.card, { height: "50%", marginBottom: 20 }]}>
+          <View style={[themeStyles.card, { height: "70%", marginBottom: 20 }]}>
             <ScrollView>
               <Text style={themeStyles.text}>{story_end}</Text>
             </ScrollView>

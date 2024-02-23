@@ -1,7 +1,6 @@
-// screens/InvestigationsScreen.js
-
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -12,6 +11,7 @@ import {
   useColorScheme,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { auth } from "../firebase/config";
 
@@ -29,33 +29,66 @@ const InvestigationsScreen = ({ route, navigation }) => {
 
   const themeStyles = getThemeStyles(useColorScheme());
 
-  useEffect(() => {
-    // Fetch stack data
-    if (auth.currentUser) {
-      const fetchInvestigations = async () => {
-        try {
-          const allInvestigations = await getInvestigations(
-            auth.currentUser.uid
-          );
-          setInvestigations(allInvestigations);
-        } catch (error) {
-          // Handle error
-        }
-      };
-      fetchInvestigations();
+  // Function to fetch investigation data
+  const fetchInvestigationsData = async () => {
+    try {
+      const allInvestigations = await getInvestigations(auth.currentUser.uid);
+      setInvestigations(allInvestigations);
+    } catch (error) {
+      // Handle error
     }
-  }, [refreshing]);
+  };
+
+  // Use focus effect to refresh data whenever the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshing(true);
+      fetchInvestigationsData().finally(() => {
+        setRefreshing(false);
+      });
+    }, [])
+  );
 
   // Handle refresh for Flatlist
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
+    fetchInvestigationsData().finally(() => {
       setRefreshing(false);
-    }, 2000); // 2 second pause
+    });
   }, []);
+
+  // Check if the previous investigation is completed
+  const isPreviousInvestigationCompleted = (currentInvestigation) => {
+    const { case_num } = currentInvestigation;
+    if (case_num > 1) {
+      const previousInvestigation = investigations.find(
+        (investigation) => investigation.case_num === case_num - 1
+      );
+      return (
+        previousInvestigation &&
+        previousInvestigation.totalLevelsCompleted ===
+          previousInvestigation.level_count
+      );
+    }
+    return true; // First investigation is never disabled
+  };
+
+    // Add a placeholder item for "More Coming Soon..."
+    const invsWithPlaceholder = [...investigations, { id: "dummy", placeholder: true }];
+
 
   // Utility to render stack panels under a stack category
   const renderItem = ({ item }) => {
+    if (item.placeholder) {
+      return (
+        <View style={styles.placeholderContainer}>
+          <Text style={themeStyles.headerText}>More Coming Soon...</Text>
+        </View>
+      );
+    }
+
+    const isDisabled = !isPreviousInvestigationCompleted(item);
+
     return (
       <React.Fragment>
         {investigations ? (
@@ -69,11 +102,15 @@ const InvestigationsScreen = ({ route, navigation }) => {
                   justifyContent: "space-between",
                   marginTop: 10,
                   marginBottom: 2,
+                  opacity: isDisabled ? 0.3 : 1,
                 },
               ]}
               onPress={() => {
-                navigation.navigate("Leads", { invId: item.id });
+                if (!isDisabled) {
+                  navigation.navigate("Leads", { invId: item.id });
+                }
               }}
+              disabled={isDisabled}
             >
               {item.cover_image ? (
                 <View
@@ -166,7 +203,7 @@ const InvestigationsScreen = ({ route, navigation }) => {
           </View>
 
           <FlatList
-            data={investigations}
+            data={invsWithPlaceholder}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -189,5 +226,14 @@ const InvestigationsScreen = ({ route, navigation }) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  placeholderContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    marginTop: 40
+  },
+});
 
 export default InvestigationsScreen;
