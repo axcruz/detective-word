@@ -181,7 +181,7 @@ const InvestigationsScreen = ({ route, navigation }) => {
   // Main render
   return (
     <>
-      {themeStyles ? (
+      {(themeStyles && investigations) ? (
         <View style={themeStyles.container}>
           <View
             style={{

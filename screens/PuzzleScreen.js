@@ -96,7 +96,6 @@ const PuzzleScreen = ({ route, navigation }) => {
   const handleGridRender = (layoutEvent) => {
     if (gridRef.current) {
       gridRef.current.measure((x, y, width, height, pageX, pageY) => {
-        console.log("Grid Dimensions:", x, y, width, height, pageX, pageY);
         setOffsetX(x);
         setScreenWidth(width);
         setOffsetY(pageY);
