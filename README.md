@@ -8,9 +8,9 @@ Detective Word is a mobile word search game with a captivating mystery noir narr
 - [Getting Started](#getting-started)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
 
 ## Features
 
@@ -19,6 +19,18 @@ Detective Word is a mobile word search game with a captivating mystery noir narr
 - Investigate cases and solve puzzles
 - Score tracking and leaderboards
 - Intuitive and user-friendly interface
+
+## Screenshots
+
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/detective-word.appspot.com/o/public_assets%2Fscreenshots%2Fpuzzle_play.gif?alt=media&token=b049d752-24cd-446c-9e4f-77e781d788ed" alt="Puzzle Screen" width="50%">
+</p>
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/detective-word.appspot.com/o/public_assets%2Fscreenshots%2Finv_screen.png?alt=media&token=1b7edbce-1c25-48a0-b751-e41385e77a74" alt="Investigations Screen" width="50%">
+</p>
+<p align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/detective-word.appspot.com/o/public_assets%2Fscreenshots%2Fstory_screen.png?alt=media&token=50660c69-f91d-4afe-9d51-059b95dc1a59" alt="Story Screen" width="50%">
+</p>
 
 ## Getting Started
 
