@@ -1,3 +1,5 @@
+// PuzzleScreen.js
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
@@ -10,11 +12,9 @@ import {
   Modal,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import LoadingIndicator from "../components/LoadingIndicator";
 import SettingsModal from "../components/SettingsModal";
-
-import { getLevels, createWordSearch } from "../utils";
+import { createWordSearch } from "../utils";
 import { getThemeStyles, colors } from "../styles/theme";
 
 const PuzzleScreen = ({ route, navigation }) => {
@@ -38,13 +38,10 @@ const PuzzleScreen = ({ route, navigation }) => {
   const [highlightedIndex, setHighlightedIndex] = useState(null);
   const [isTimeFrozen, setIsTimeFrozen] = useState(false);
   const [freezeTimeCountdown, setFreezeTimeCountdown] = useState(0);
-
-  const gridRef = useRef(null); // Create a ref
+  const gridRef = useRef(null);
   const selectedCellsRef = useRef(selectedCells);
   selectedCellsRef.current = selectedCells;
-
   var diagRemoved = false;
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   // Generate the word search array
@@ -54,13 +51,14 @@ const PuzzleScreen = ({ route, navigation }) => {
     setSolution(result.solutionArray);
   }, [dimension, words]);
 
-  // If all words found go to game result
+  // If all words are found go to game result
   useEffect(() => {
     if (foundWords.length > 0 && foundWords.length == words.length) {
       handleGameEnd("success", timeRemaining);
     }
   }, [foundWords]);
 
+  // Handle clock timer
   useEffect(() => {
     const timer = setInterval(() => {
       if (gameStatus === "play" && !isTimeFrozen) {
@@ -93,6 +91,7 @@ const PuzzleScreen = ({ route, navigation }) => {
     }, 2000); // 2 second pause
   }, []);
 
+  // Collect grid dimensions after render
   const handleGridRender = (layoutEvent) => {
     if (gridRef.current) {
       gridRef.current.measure((x, y, width, height, pageX, pageY) => {
@@ -104,6 +103,7 @@ const PuzzleScreen = ({ route, navigation }) => {
     }
   };
 
+  // Behavior for when time runs out
   const handleGameEnd = (gameStatus, gameScore) => {
     setGameStatus("end");
     navigation.navigate("GameResult", {
@@ -115,10 +115,12 @@ const PuzzleScreen = ({ route, navigation }) => {
     });
   };
 
+  // Behavior for drag over grid cell
   const handleCellDrag = (x, y) => {
     const cellSize = cellSizeCalc;
     const columnIndex = Math.floor((x - offsetX) / cellSize);
     const rowIndex = Math.floor((y - offsetY) / cellSize);
+
     if (
       rowIndex >= 0 &&
       rowIndex < grid.length &&
@@ -190,7 +192,7 @@ const PuzzleScreen = ({ route, navigation }) => {
   };
 
   const onPanResponderRelease = () => {
-    // Check if the selectedWord forms a valid word (implement your own logic)
+    // Check if the selectedWord forms a valid word
     const word = selectedWord.map(({ letter }) => letter).join("");
     const upperWord = word.toUpperCase();
 
@@ -213,6 +215,7 @@ const PuzzleScreen = ({ route, navigation }) => {
     }
   };
 
+  // Handles drag gestures
   const panResponder = PanResponder.create({
     onPanResponderGrant: handlePanResponderGrant,
     onStartShouldSetPanResponder: () => true,
@@ -234,6 +237,7 @@ const PuzzleScreen = ({ route, navigation }) => {
     setShowClueModal(false);
   };
 
+  // Handle when the fingerprint insight is pressed
   const handleHintPress = () => {
     // Find indices with non-empty and non-undefined values in the solutionArray
     const nonEmptyIndices = [];
@@ -262,6 +266,7 @@ const PuzzleScreen = ({ route, navigation }) => {
     }
   };
 
+  // Handle when the freeze insight is pressed
   const handleFreezeTimePress = () => {
     if (hints > 0 && !isTimeFrozen) {
       // Freeze the time for 15 seconds
@@ -334,9 +339,7 @@ const PuzzleScreen = ({ route, navigation }) => {
                           ({ row, col }) => row === index && col === colIndex
                         ) && styles.selectedCell,
                       ]}
-                      onPress={() => {
-                        // Handle cell press logic
-                      }}
+                      onPress={() => {}}
                     >
                       <Text style={themeStyles.text}>{cell}</Text>
                     </TouchableOpacity>
@@ -424,7 +427,7 @@ const PuzzleScreen = ({ route, navigation }) => {
             </Text>
           )}
           keyExtractor={(item) => item}
-          numColumns={2} // Set the number of columns to 2
+          numColumns={2}
         />
       </View>
 

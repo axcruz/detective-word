@@ -1,3 +1,5 @@
+// LeadsScreen.js
+
 import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
@@ -18,7 +20,7 @@ const LeadsScreen = ({ route, navigation }) => {
   const { invId } = route.params;
 
   const [refreshing, setRefreshing] = useState(true);
-  const [leads, setLeads] = useState();
+  const [leads, setLeads] = useState([]);
 
   const themeStyles = getThemeStyles(useColorScheme());
 
@@ -28,6 +30,7 @@ const LeadsScreen = ({ route, navigation }) => {
       setLeads(result.levelData);
     } catch (error) {
       // Handle error
+      
     } finally {
       setRefreshing(false);
     }
@@ -35,7 +38,6 @@ const LeadsScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      // The screen is focused
       // Call the fetchData function when the screen is focused
       setRefreshing(true);
       fetchData();
@@ -57,10 +59,7 @@ const LeadsScreen = ({ route, navigation }) => {
 
     return (
       <TouchableOpacity
-        style={[
-          styles.leadBox,
-          isDisabled && styles.disabledLeadBox,
-        ]}
+        style={[styles.leadBox, isDisabled && styles.disabledLeadBox]}
         onPress={() => {
           if (item.story) {
             navigation.navigate("Story", {

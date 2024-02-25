@@ -1,18 +1,16 @@
 // GameResultScreen.js
-import React, { useState, useEffect, useRef, useCallback } from "react";
+
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   useColorScheme,
   ScrollView,
   Image,
 } from "react-native";
 import { auth } from "../firebase/config";
-
 import { getThemeStyles } from "../styles/theme";
-
 import { savePlayerScore } from "../utils";
 
 const GameResultScreen = ({ route, navigation }) => {
@@ -21,7 +19,7 @@ const GameResultScreen = ({ route, navigation }) => {
   const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {
-    // Save the player's score when the component mounts
+    // Save the player's score
     if (status === "success") {
       savePlayerScore(invId, levelId, auth.currentUser.uid, score);
     } else {
@@ -82,28 +80,5 @@ const GameResultScreen = ({ route, navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  resultText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: "blue",
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
 
 export default GameResultScreen;

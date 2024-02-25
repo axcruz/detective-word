@@ -1,4 +1,5 @@
-// utils/savePlyerScore.test.js
+// savePlyerScore.test.js
+
 import { savePlayerScore } from "../utils";
 import { db } from "../firebase/config";
 

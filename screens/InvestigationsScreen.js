@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+// InvestigationsScreen.js
+
+import React, { useState, useCallback } from "react";
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -12,16 +13,11 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { auth } from "../firebase/config";
-
 import LoadingIndicator from "../components/LoadingIndicator";
-
-import { getInvestigations } from "../utils";
-
-import { getThemeStyles } from "../styles/theme";
-
 import SettingsModal from "../components/SettingsModal";
+import { getInvestigations } from "../utils";
+import { getThemeStyles } from "../styles/theme";
 
 const InvestigationsScreen = ({ route, navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -73,15 +69,24 @@ const InvestigationsScreen = ({ route, navigation }) => {
     return true; // First investigation is never disabled
   };
 
-    // Add a placeholder item for "More Coming Soon..."
-    const invsWithPlaceholder = [...investigations, { id: "dummy", placeholder: true }];
-
+  // Add a placeholder item for "More Coming Soon..."
+  const invsWithPlaceholder = [
+    ...investigations,
+    { id: "placeholder", placeholder: true },
+  ];
 
   // Utility to render stack panels under a stack category
   const renderItem = ({ item }) => {
     if (item.placeholder) {
       return (
-        <View style={styles.placeholderContainer}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            marginTop: 40,
+          }}
+        >
           <Text style={themeStyles.headerText}>More Coming Soon...</Text>
         </View>
       );
@@ -181,7 +186,7 @@ const InvestigationsScreen = ({ route, navigation }) => {
   // Main render
   return (
     <>
-      {(themeStyles && investigations) ? (
+      {themeStyles && investigations ? (
         <View style={themeStyles.container}>
           <View
             style={{
@@ -226,14 +231,5 @@ const InvestigationsScreen = ({ route, navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  placeholderContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-    marginTop: 40
-  },
-});
 
 export default InvestigationsScreen;

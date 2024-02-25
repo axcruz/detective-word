@@ -1,4 +1,4 @@
-// screens/LogInScreen.js
+// LoginScreen.js
 
 import React, { useState } from "react";
 import {
@@ -10,16 +10,13 @@ import {
   StyleSheet,
   useColorScheme,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
 import { auth } from "../firebase/config";
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getThemeStyles } from "../styles/theme";
 
 const LogInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   const onFooterLinkPress = () => {

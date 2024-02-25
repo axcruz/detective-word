@@ -1,3 +1,5 @@
+// getScoreboard.test.js
+
 import { getScoreboard } from "../utils";
 import { db } from "../firebase/config";
 
@@ -37,10 +39,10 @@ jest.mock("../firebase/config", () => ({
 
 describe("getScoreboard", () => {
     it("should fetch and calculate scoreboard correctly", async () => {
-        // Call the function
+
         const result = await getScoreboard("mockInvId");
 
-        // Assert the expected result based on your mock data
+        // Assert the expected result based on mock data
         expect(result).toEqual([
             {
                 playerId: "mockUserId2",

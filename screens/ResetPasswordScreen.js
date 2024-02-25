@@ -1,4 +1,4 @@
-// screens/ResetPasswordScreen.js
+// ResetPasswordScreen.js
 
 import React, { useState } from "react";
 import {
@@ -11,14 +11,11 @@ import {
   useColorScheme,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
 import { auth } from "../firebase/config";
-
 import { getThemeStyles } from "../styles/theme";
 
 const ResetPasswordScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   const onFooterLinkPress = () => {

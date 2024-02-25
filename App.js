@@ -1,7 +1,7 @@
 // App.js
 
 import React, { useEffect, useState } from "react";
-import { View, useColorScheme, SafeAreaView } from "react-native";
+import { View, useColorScheme } from "react-native";
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -48,7 +48,7 @@ const App = () => {
   if (initializing) return null;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <NavigationContainer theme={theme === "dark" ? DarkTheme : DefaultTheme}>
         {currentUser ? (
           <Stack.Navigator
@@ -103,7 +103,7 @@ const App = () => {
         )}
       </NavigationContainer>
       <StatusBar style={theme === "dark" ? "light" : "dark"} />
-    </SafeAreaView>
+    </View>
   );
 };
 

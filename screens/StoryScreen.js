@@ -1,4 +1,5 @@
 // StoryScreen.js
+
 import React, { useState } from "react";
 import {
   View,
@@ -9,7 +10,6 @@ import {
   useColorScheme,
   Image,
 } from "react-native";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getThemeStyles, colors } from "../styles/theme";
 
@@ -27,14 +27,12 @@ const StoryScreen = ({ route, navigation }) => {
   } = route.params;
 
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   const handleNextStory = () => {
     if (currentStoryIndex < stories.length - 1) {
       setCurrentStoryIndex(currentStoryIndex + 1);
     } else {
-      // Optionally, you can navigate to another screen or perform an action when the story ends.
       navigation.navigate("Puzzle", {
         invId: invId,
         levelId: levelId,
@@ -52,7 +50,6 @@ const StoryScreen = ({ route, navigation }) => {
   };
 
   const handleSkipStory = () => {
-    // Optionally, you can navigate to another screen or perform an action when the story is skipped.
     navigation.navigate("Puzzle", {
       invId: invId,
       levelId: levelId,

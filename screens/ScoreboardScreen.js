@@ -1,24 +1,16 @@
+// ScoreboardScreen.js
+
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  useColorScheme,
-} from "react-native";
-
+import { View, Text, FlatList, useColorScheme } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
 import LoadingIndicator from "../components/LoadingIndicator";
-
 import { getScoreboard } from "../utils";
-
 import { getThemeStyles } from "../styles/theme";
 
 const ScoreboardScreen = ({ route }) => {
   const { invId } = route.params;
   const [scoreboard, setScoreboard] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {

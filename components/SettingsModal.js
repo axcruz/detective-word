@@ -5,7 +5,6 @@ import {
   Modal,
   Text,
   ActivityIndicator,
-  Switch,
   useColorScheme,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -66,8 +65,16 @@ const SettingsModal = (props) => {
               <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>
                 Settings
               </Text>
-              <Text style={themeStyles.text}>{pref.username}</Text>
-              <Text style={themeStyles.text}>{user.email}</Text>
+              <View
+                style={{ flexDirection: "column", alignItems: "flex-start" }}
+              >
+                <Text style={[themeStyles.text, { margin: 2 }]}>
+                  Username: {pref.username}
+                </Text>
+                <Text style={[themeStyles.text, { margin: 2 }]}>
+                  Email: {user.email}
+                </Text>
+              </View>
               <View style={{ flexDirection: "row", marginTop: 20 }}>
                 <TouchableOpacity
                   style={[themeStyles.configButton, { marginHorizontal: 5 }]}

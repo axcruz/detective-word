@@ -1,10 +1,12 @@
-// Helper function to generate random word search puzzles given the inputs (n, w).
-// n is the dimension of the puzzle, the output will be a n x n array of letters.
-// w is an array of words to be placed in to the puzzle. The size of w should be at most floor(n/2) and each word in w must be at most n characters long.
+/**
+ * @description Utility function to generate random word search puzzles given the inputs (n, w).
+ * @input n     The dimension of the puzzle, the output will be a n x n array of letters.
+ * @input w     An array of words to be placed in to the puzzle. The size of w should be at
+ *              most floor(n/2) and each word in w must be at most n characters long.
+ **/
 const createWordSearch = (n, w) => {
   // Check if each word is at most n characters long
   const isWordsValid = w.every((word) => word.length <= n);
-
   if (!isWordsValid) {
     console.error(
       "Error: Each word must be at most " + n + " characters long."
@@ -21,9 +23,9 @@ const createWordSearch = (n, w) => {
     return null;
   }
 
-  // Create an empty n x n array filled with empty strings
+  // Create an empty n x n array filled with empty strings to hold puzzle
   const wordSearchArray = Array.from({ length: n }, () => Array(n).fill(""));
-
+  // Create an empty n x n array filled with empty strings to hold solution
   const solutionArray = Array.from({ length: n }, () => Array(n).fill(""));
 
   // Use a Set to keep track of already placed positions
@@ -106,7 +108,6 @@ const createWordSearch = (n, w) => {
   // Place each word in a random position and direction
   for (const word of w) {
     let placed = false;
-
     while (!placed) {
       const row = Math.floor(Math.random() * n);
       const col = Math.floor(Math.random() * n);

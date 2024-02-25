@@ -1,4 +1,4 @@
-// screens/RegistrationScreen.js
+// RegistrationScreen.js
 
 import React, { useState } from "react";
 import {
@@ -12,9 +12,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { db, auth } from "../firebase/config";
-
 import LoadingIndicator from "../components/LoadingIndicator";
-
 import { getThemeStyles } from "../styles/theme";
 
 const RegistrationScreen = ({ navigation }) => {
@@ -23,7 +21,6 @@ const RegistrationScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const themeStyles = getThemeStyles(useColorScheme());
 
   const onFooterLinkPress = () => {
