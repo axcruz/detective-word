@@ -201,7 +201,6 @@ const PuzzleScreen = ({ route, navigation }) => {
       words.some((answerWord) => answerWord.toUpperCase() === upperWord) &&
       !foundWords.includes(upperWord)
     ) {
-      console.log("Found word:", upperWord);
       setFoundWords([...foundWords, upperWord]);
       setAnswerCells([...answerCells, ...selectedCells]);
     }
